@@ -6,5 +6,5 @@ import { DockerRemoteFormData } from '../../types/DockerTypes';
 test('renders learn react link', () => {
   const onFetch = async (e: DockerRemoteFormData) => console.log(e);
   render(<DockerRemoteForm onFetch={onFetch} />);
-  expect(screen.getByText(/Whale watch/i)).toBeInTheDocument();
+  expect(screen.getByText(/Add Docker remote/i)).toBeInTheDocument();
 });
