@@ -1,0 +1,19 @@
+.DockerRemote-CardDeck {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+}
+
+.DockerRemote-CardDeck>.card {
+    min-width: 400px;
+    max-width: 500px;
+    flex: 1 0;
+    margin-right: 15px;
+    margin-bottom: 0;
+    margin-left: 15px;
+}
+
+.DockerRemote-CardDeck .card-text {
+    text-align: start;
+}
