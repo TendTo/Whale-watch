@@ -1,0 +1,11 @@
+{
+    "placeholderCa": "-----BEGIN CERTIFICATE-----\nMIIGGTCCBAGgAwIBAgIdasdasdggbZEprmjKoWclqyd+zmQwDQYJKoZIhvcNAQEL\nBQAwgZsxCzAJBgNVBAA56dGBaT4wDAYDVQQIDAVJdGFseTERMA8GA1UEBwwIUy5U\n-----END CERTIFICATE-----",
+    "placeholderCert": "-----BEGIN CERTIFICATE-----\n04dNMzgKIRZWt/WJucI7uPnd90g3XaD2z9LTfpQbs5ft5+qMyAiwMgvvFKOfK3gY\nR8V6seVvA9BCJOEnTcxcl8dGeFbNtQLi2qkzk+CqTKwhIFjRatmQl00qBdnnR/4u\n-----END CERTIFICATE-----",
+    "placeholderKey": "-----BEGIN RSA PRIVATE KEY-----\n2bMtAoIBAHV+68HOkCKGe4ybfYGYA6eGyro6udeR5Qf8cRyUdLK1W0BhWUoHrRpb\nxGIK3tCf3iXk8vtdm514snHGvZkh/kdvHtlWmA8QR0XeDoYh17egWZB+6OrxEV6m\n-----END RSA PRIVATE KEY-----",
+    "placeholderHost": "hostname.com",
+    "placeholderPort": "2375",
+    "placeholderSocket": "/var/run/docker.sock",
+    "infoTooltip": "Connect to a new remote Docker daemon.\nIf only host and port are specified, an http connection will be enstablished.\nIf all fileds are filled, an HTTPS connection will be used instead.\nFor more informations, see the README.md",
+    "hostInfoTooltip": "Host name of the remote machine running the Docker daemon.\nCan be an IP address.",
+    "portInfoTooltip": "Port the Docker daemon will listen to. Defaults to 2375."
+}
