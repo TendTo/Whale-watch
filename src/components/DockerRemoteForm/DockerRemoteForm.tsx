@@ -7,6 +7,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
 import Tooltip from "react-bootstrap/Tooltip";
 import { useForm } from "react-hook-form";
+import { useHistory, useLocation } from "react-router-dom";
 import { DockerRemoteContext } from '../../context/DockerRemoteContext';
 import { DockerRemoteData } from '../../types/DockerTypes';
 import './DockerRemoteForm.css';
@@ -25,6 +26,9 @@ function DockerRemoteForm() {
         </Tooltip>
     )
 
+    const location = useLocation();
+    const history = useHistory();
+
     const [show, setShow] = useState(false);
     const [local, setLocal] = useState(false);
     const { register, handleSubmit, reset } = useForm({ defaultValues: defaultData });
@@ -37,6 +41,8 @@ function DockerRemoteForm() {
         data.isLocal = local;
         dockerRemoteContext?.addDockerRemote(data)
         handleClose();
+        if (location.pathname !== "/")
+            history.push("/");
     };
 
     return (

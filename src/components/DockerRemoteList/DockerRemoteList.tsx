@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
+import { Link } from 'react-router-dom';
 import { DockerRemoteContext } from "../../context/DockerRemoteContext";
 import { DockerRemoteData } from '../../types/DockerTypes';
-import './DockerRemote.css';
+import './DockerRemoteList.css';
 
 /**
  * Shows some minimal informations to check if the .pem file provided by the user is correct
@@ -17,7 +18,7 @@ function showPem(value: string) {
     return lines[1].slice(0, 7);
 }
 
-function DockerRemote() {
+function DockerRemoteList() {
     const dockerRemoteContextData = useContext(DockerRemoteContext);
 
     let dockerRemoteData: [string, DockerRemoteData][] = [];
@@ -36,6 +37,9 @@ function DockerRemote() {
                         {value.ca && (<>Certificate Authority: <b>{showPem(value.ca)}</b><br></br></>)}
                         {value.cert && (<>Certificate: <b>{showPem(value.cert)}</b><br></br></>)}
                         {value.key && (<>Key: <b>{showPem(value.key)}</b><br></br></>)}
+                        <Link to={key}>
+                            Go to the remote's page
+                        </Link>
                     </Card.Text>
                 </Card.Body>
             </Card>
@@ -45,7 +49,7 @@ function DockerRemote() {
     return (
         <>
             {dockerRemotes && (
-                <div className="DockerRemote-CardDeck">
+                <div className="DockerRemoteList-CardDeck">
                     {dockerRemotes}
                 </div>
             )}
@@ -59,4 +63,4 @@ function DockerRemote() {
     );
 }
 
-export default DockerRemote;
+export default DockerRemoteList;

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import React, { useContext } from 'react';
 import { DockerRemoteContext } from '../../context/DockerRemoteContext';
 import { DockerRemoteData, DockerRemoteContextValue } from '../../types/DockerTypes';
-import DockerRemote from './DockerRemote';
+import DockerRemoteList from './DockerRemoteList';
 
 
 const contextRender = (ui: JSX.Element, ...values: DockerRemoteData[]) => {
@@ -13,13 +13,13 @@ const contextRender = (ui: JSX.Element, ...values: DockerRemoteData[]) => {
   );
 }
 
-test('DockerRemote shows default value', () => {
-  render(<DockerRemote />)
+test('DockerRemoteList shows default value', () => {
+  render(<DockerRemoteList />)
   expect(screen.getByText(/No remote Docker instances found/)).toBeInTheDocument();
 })
 
-test('DockerRemote shows one item', () => {
-  contextRender(<DockerRemote />, {
+test('DockerRemoteList shows one item', () => {
+  contextRender(<DockerRemoteList />, {
     isLocal: false,
     protocol: "http",
     host: "localhost",
@@ -29,8 +29,8 @@ test('DockerRemote shows one item', () => {
   //expect(screen.getByText(/remotehost:2375/i)).toBeInTheDocument();
 });
 
-test('DockerRemote shows more items', () => {
-  contextRender(<DockerRemote />, {
+test('DockerRemoteList shows more items', () => {
+  contextRender(<DockerRemoteList />, {
     isLocal: false,
     protocol: "http",
     host: "localhost",

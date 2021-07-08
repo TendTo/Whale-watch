@@ -1,4 +1,4 @@
-.DockerRemote-CardDeck {
+.DockerRemoteList-CardDeck {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -6,6 +6,6 @@
     grid-gap: 24px;
 }
 
-.DockerRemote-CardDeck .card-text {
+.DockerRemoteList-CardDeck .card-text {
     text-align: start;
 }
