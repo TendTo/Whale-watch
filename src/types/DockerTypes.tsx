@@ -11,7 +11,7 @@ export interface DockerImageLs {
     Containers: number
 }
 
-export interface DockerRemoteFormData {
+export interface DockerRemoteData {
     isLocal: boolean,
     protocol?: "https" | "http",
     host?: string,
@@ -20,4 +20,17 @@ export interface DockerRemoteFormData {
     cert?: string,
     key?: string,
     socket?: string,
+}
+
+export interface DockerRemoteContextState {
+    dockerRemotes: {
+        [key: string]: DockerRemoteData
+    }
+}
+
+export interface DockerRemoteContextValue {
+    dockerRemotes: {
+        [key: string]: DockerRemoteData
+    }
+    addDockerRemote: (newDockerRemote: DockerRemoteData) => void
 }

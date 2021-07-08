@@ -5,13 +5,11 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import { useForm } from "react-hook-form";
-import { DockerRemoteFormData } from '../../types/DockerTypes';
+import { DockerRemoteData } from '../../types/DockerTypes';
+import { DockerRemoteContext } from '../../context/DockerRemoteContext';
+import { useContext } from "react";
 
-interface Props {
-    onFetch: (docker: DockerRemoteFormData) => Promise<void>
-}
-
-function DockerRemoteForm(props: Props) {
+function DockerRemoteForm() {
     const placeholderCa = `-----BEGIN CERTIFICATE-----
     MIIGGTCCBAGgAwIBAgIdasdasdggbZEprmjKoWclqyd+zmQwDQYJKoZIhvcNAQEL
     BQAwgZsxCzAJBgNVBAA56dGBaT4wDAYDVQQIDAVJdGFseTERMA8GA1UEBwwIUy5U
@@ -37,21 +35,16 @@ function DockerRemoteForm(props: Props) {
     const [show, setShow] = useState(false);
     const [local, setLocal] = useState(false);
     const { register, handleSubmit, reset } = useForm({ defaultValues: defaultData });
+    const dockerRemoteContext = useContext(DockerRemoteContext);
 
     const handleOpen = () => setShow(true);
-    const handleClose = () => setShow(false);
+    const handleClose = () => { reset(defaultData); setShow(false); };
 
-    const onSubmit = (data: DockerRemoteFormData) => {
+    const onSubmit = (data: DockerRemoteData) => {
         data.isLocal = local;
-        console.log(data);
-        props.onFetch(data);
+        dockerRemoteContext?.addDockerRemote(data)
         handleClose();
     };
-    const onClose = () => {
-        reset(defaultData);
-        handleClose();
-    };
-
 
     return (
         <>
@@ -86,7 +79,7 @@ function DockerRemoteForm(props: Props) {
                                     <Col xs="3">
                                         <Form.Group controlId="dockerRemoteForm.host">
                                             <Form.Label>Remote port</Form.Label>
-                                            <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={placeholderPort} />
+                                            <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={placeholderPort} required={!local} />
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -115,7 +108,7 @@ function DockerRemoteForm(props: Props) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
                     <Button variant="primary" type="submit" form="dockerRemoteForm">

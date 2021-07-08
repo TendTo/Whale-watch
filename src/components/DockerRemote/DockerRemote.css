@@ -1,17 +1,9 @@
 .DockerRemote-CardDeck {
     width: 100%;
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-start;
-}
-
-.DockerRemote-CardDeck>.card {
-    min-width: 400px;
-    max-width: 500px;
-    flex: 1 0;
-    margin-right: 15px;
-    margin-bottom: 0;
-    margin-left: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-rows: max-content;
+    grid-gap: 24px;
 }
 
 .DockerRemote-CardDeck .card-text {
