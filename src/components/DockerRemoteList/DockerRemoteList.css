@@ -1,11 +1,26 @@
 .DockerRemoteList-CardDeck {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     grid-auto-rows: max-content;
     grid-gap: 24px;
 }
 
+.DockerRemoteList-CardDeck .card {
+    max-width: 600px;
+}
+
 .DockerRemoteList-CardDeck .card-text {
     text-align: start;
+}
+
+.DockerRemoteList-buttons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+}
+
+.DockerRemoteList-buttons .btn {
+    width: 40px;
+    height: 40px;
 }

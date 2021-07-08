@@ -1,4 +1,7 @@
 import React, { useContext } from "react";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { Link } from 'react-router-dom';
 import { DockerRemoteContext } from "../../context/DockerRemoteContext";
@@ -32,14 +35,25 @@ function DockerRemoteList() {
                 <Card.Header><h5>{`${value.host}:${value.port}`}</h5></Card.Header>
                 <Card.Body>
                     <Card.Text>
-                        Host: <b>{value.host}</b><br></br>
-                        Port: <b>{value.port}</b><br></br>
-                        {value.ca && (<>Certificate Authority: <b>{showPem(value.ca)}</b><br></br></>)}
-                        {value.cert && (<>Certificate: <b>{showPem(value.cert)}</b><br></br></>)}
-                        {value.key && (<>Key: <b>{showPem(value.key)}</b><br></br></>)}
-                        <Link to={key}>
-                            Go to the remote's page
-                        </Link>
+                        <Row>
+                            <Col xs={8}>
+                                Host: <b>{value.host}</b><br></br>
+                                Port: <b>{value.port}</b><br></br>
+                                {value.ca && (<>Certificate Authority: <b>{showPem(value.ca)}</b><br></br></>)}
+                                {value.cert && (<>Certificate: <b>{showPem(value.cert)}</b><br></br></>)}
+                                {value.key && (<>Key: <b>{showPem(value.key)}</b><br></br></>)}
+                            </Col>
+                            <Col className="DockerRemoteList-buttons" xs={2}>
+                                <Link to={key}>
+                                    <Button variant="primary lg">
+                                        <i className="fa fa-eye"></i>
+                                    </Button>
+                                </Link>
+                                <Button variant="danger lg" onClick={() => dockerRemoteContextData?.removeDockerRemote(key)}>
+                                    <i className="fa fa-trash"></i>
+                                </Button>
+                            </Col>
+                        </Row>
                     </Card.Text>
                 </Card.Body>
             </Card>
@@ -53,7 +67,7 @@ function DockerRemoteList() {
                     {dockerRemotes}
                 </div>
             )}
-            {dockerRemotes.length == 0 && (
+            {dockerRemotes.length === 0 && (
                 <p>
                     No remote Docker instances found :(
                 </p>

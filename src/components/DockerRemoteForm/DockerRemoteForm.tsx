@@ -5,9 +5,11 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
+import Spinner from "react-bootstrap/Spinner";
 import Tooltip from "react-bootstrap/Tooltip";
 import { useForm } from "react-hook-form";
 import { useHistory, useLocation } from "react-router-dom";
+import DockerApi from "../../api/DockerApi";
 import { DockerRemoteContext } from '../../context/DockerRemoteContext';
 import { DockerRemoteData } from '../../types/DockerTypes';
 import './DockerRemoteForm.css';
@@ -19,27 +21,47 @@ function DockerRemoteForm() {
         ca: "",
         cert: "",
         key: ""
-    }
+    };
     const infoTooltip = (
         <Tooltip id="infoTooltip">
             {strings.infoTooltip}
         </Tooltip>
-    )
+    );
 
     const location = useLocation();
     const history = useHistory();
 
     const [show, setShow] = useState(false);
     const [local, setLocal] = useState(false);
+    const [fail, setFail] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { register, handleSubmit, reset } = useForm({ defaultValues: defaultData });
     const dockerRemoteContext = useContext(DockerRemoteContext);
 
     const handleOpen = () => setShow(true);
-    const handleClose = () => { reset(defaultData); setShow(false); };
+    const handleClose = () => { setSuccess(false); setFail(false); reset(defaultData); setShow(false); };
+
+    const onTest = (data: DockerRemoteData) => {
+
+        const onFail = () => {
+            setSuccess(false);
+            setFail(true);
+        }
+
+        const onSuccess = () => {
+            setFail(false);
+            setSuccess(true);
+        }
+
+        const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
+        dockerApi.ping()
+            .then((res) => res ? onSuccess() : onFail())
+            .catch(onFail);
+    }
 
     const onSubmit = (data: DockerRemoteData) => {
-        data.isLocal = local;
-        dockerRemoteContext?.addDockerRemote(data)
+        dockerRemoteContext?.addDockerRemote(data);
         handleClose();
         if (location.pathname !== "/")
             history.push("/");
@@ -117,8 +139,19 @@ function DockerRemoteForm() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    {fail && !loading && (
+                        <p className="text-danger">Could not connect to the Docker remote daemon</p>
+                    )}
+                    {success && !loading && (
+                        <p className="text-success">Connection successfully enstablished</p>
+                    )}
+
+                    <Button variant="warning" onClick={handleSubmit(onTest)}>
+                        {loading && <Spinner animation="border" size="sm" />}
+                        {!loading && "Test connection"}
+                    </Button>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Cancel
                     </Button>
                     <Button variant="primary" type="submit" form="dockerRemoteForm">
                         Add

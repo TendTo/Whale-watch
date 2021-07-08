@@ -6,7 +6,11 @@ import DockerRemoteList from './DockerRemoteList';
 
 
 const contextRender = (ui: JSX.Element, ...values: DockerRemoteData[]) => {
-  const contextData: DockerRemoteContextValue = { dockerRemotes: {}, addDockerRemote: (element: DockerRemoteData) => console.log(element) };
+  const contextData: DockerRemoteContextValue = {
+    dockerRemotes: {},
+    addDockerRemote: (element: DockerRemoteData) => console.log(element),
+    removeDockerRemote: (element: string) => console.log(element)
+  };
   values.forEach(e => contextData.dockerRemotes[`${e.host}:${e.port}`] = e);
   return render(
     <DockerRemoteContext.Provider value={contextData}> {ui}</DockerRemoteContext.Provider >
@@ -20,7 +24,6 @@ test('DockerRemoteList shows default value', () => {
 
 test('DockerRemoteList shows one item', () => {
   contextRender(<DockerRemoteList />, {
-    isLocal: false,
     protocol: "http",
     host: "localhost",
     port: 2375
@@ -31,20 +34,18 @@ test('DockerRemoteList shows one item', () => {
 
 test('DockerRemoteList shows more items', () => {
   contextRender(<DockerRemoteList />, {
-    isLocal: false,
     protocol: "http",
     host: "localhost",
     port: 2375
   },
-  {
-    isLocal: false,
-    protocol: "https",
-    host: "remotehost",
-    port: 2375,
-    ca: "ca",
-    cert: "cert",
-    key: "key"
-  });
+    {
+      protocol: "https",
+      host: "remotehost",
+      port: 2375,
+      ca: "ca",
+      cert: "cert",
+      key: "key"
+    });
   expect(screen.getByText(/localhost:2375/i)).toBeInTheDocument();
   expect(screen.getByText(/remotehost:2375/i)).toBeInTheDocument();
 });

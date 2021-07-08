@@ -13,12 +13,22 @@ class DockerRemoteContextProvider extends React.Component {
     addDockerRemote = (newDockerRemote: DockerRemoteData) => {
         const currentDockerRemotes = this.state.dockerRemotes;
         currentDockerRemotes[`${newDockerRemote.host}:${newDockerRemote.port}`] = newDockerRemote;
-        this.setState({dockerRemotes: currentDockerRemotes});
+        this.setState({ dockerRemotes: currentDockerRemotes });
+    }
+
+    removeDockerRemote = (dockerRemoteKey: string) => {
+        const currentDockerRemotes = this.state.dockerRemotes;
+        delete currentDockerRemotes[dockerRemoteKey];
+        this.setState({ dockerRemotes: currentDockerRemotes });
     }
 
     override render() {
         return (
-            <DockerRemoteContext.Provider value={{ dockerRemotes: this.state.dockerRemotes, addDockerRemote: this.addDockerRemote }}>
+            <DockerRemoteContext.Provider value={{
+                dockerRemotes: this.state.dockerRemotes,
+                addDockerRemote: this.addDockerRemote,
+                removeDockerRemote: this.removeDockerRemote
+            }}>
                 {this.props.children}
             </DockerRemoteContext.Provider>
         );
