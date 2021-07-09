@@ -126,6 +126,11 @@ export interface VolumeInspectInfo {
     } | null;
 }
 
+export interface VolumeList {
+    Volumes: VolumeInspectInfo[]
+    Warnings: string[]
+}
+
 export interface ContainerInspectInfo {
     Id: string;
     Created: string;

@@ -1,7 +1,9 @@
 import { DockerRemoteData, FetchMethod } from '../types/DockerTypes'
-import { ImageInfo, ImageRemoveInfo, ImageInspectInfo, ServiceCreateResponse, ContainerInfo, ContainerInspectInfo } from '../types/DockerApiTypes'
+import { ImageInfo, ImageRemoveInfo, ImageInspectInfo, ServiceCreateResponse, ContainerInfo, ContainerInspectInfo, VolumeInspectInfo, VolumeList } from '../types/DockerApiTypes'
 
 class DockerApi {
+    private force = {key: "force", value: "true"};
+    private all = {key: "all", value: "true"};
     host: string
     port: number
     ca?: string
@@ -100,7 +102,7 @@ class DockerApi {
     }
 
     async imageRm(image: ImageInfo, ...params: { key: string, value: string }[]): Promise<ImageRemoveInfo[]> {
-        const result = await this.apiRequestJson(`images/${image.Id.replace("sha256:", "")}`, "DELETE", undefined, { key: "force", value: "true" });
+        const result = await this.apiRequestJson(`images/${image.Id.replace("sha256:", "")}`, "DELETE", undefined, this.force);
         if (result === null)
             throw Error('imageRm has failed');
         return result;
@@ -119,7 +121,7 @@ class DockerApi {
     }
 
     async containerLs(...params: { key: string, value: string }[]): Promise<ContainerInfo[]> {
-        const result = await this.apiRequestJson(`containers/json`, undefined, undefined, { key: "all", value: "true" });
+        const result = await this.apiRequestJson(`containers/json`, undefined, undefined, this.all);
         if (result === null)
             throw Error('containerRun has failed');
         return result;
@@ -141,7 +143,25 @@ class DockerApi {
     }
 
     async containerRm(container: ContainerInfo, ...params: { key: string, value: string }[]): Promise<void> {
-        await this.apiRequest(`containers/${container.Id}`, "DELETE", undefined, { key: "force", value: "true" });
+        await this.apiRequest(`containers/${container.Id}`, "DELETE", undefined, this.force);
+    }
+
+    async volumeLs(...params: { key: string, value: string }[]): Promise<VolumeList> {
+        const result = await this.apiRequestJson(`volumes`);
+        if (result === null)
+            throw Error('containerRun has failed');
+        return result;
+    }
+
+    async volumeInpect(volume: VolumeInspectInfo, ...params: { key: string, value: string }[]): Promise<VolumeInspectInfo> {
+        const result = await this.apiRequestJson(`volumes/${volume.Name}`);
+        if (result === null)
+            throw Error('containerRun has failed');
+        return result;
+    }
+
+    async volumeRm(volume: VolumeInspectInfo, ...params: { key: string, value: string }[]): Promise<void> {
+        await this.apiRequest(`volumes/${volume.Name}`, "DELETE", undefined, this.force);
     }
 
     async ping(): Promise<boolean> {

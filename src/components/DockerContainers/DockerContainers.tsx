@@ -55,7 +55,7 @@ function DockerContainers({ data, eventKey }: Props) {
 
     const onError = () => toast("An error has occurred\nCheck the console to know more", { contentClassName: "text-danger" })
 
-    const startContainerLs = (force = false) => {
+    const fetchContainerLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
             dockerApi.containerLs().then(setContainerLs).catch(e => console.error(e));
@@ -65,7 +65,7 @@ function DockerContainers({ data, eventKey }: Props) {
     const containersElements = containerLs?.map(container => {
         const onRun = () => {
             dockerApi.containerRun(container)
-                .then(() => startContainerLs(true))
+                .then(() => fetchContainerLs(true))
                 .then(() => toast("A new container has started running"))
                 .catch(e => console.error(e))
                 .catch(onError);
@@ -78,21 +78,21 @@ function DockerContainers({ data, eventKey }: Props) {
         }
         const onRestart = () => {
             dockerApi.containerRestart(container)
-                .then(() => startContainerLs(true))
+                .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been restarted"))
                 .catch(e => console.error(e))
                 .catch(onError);
         }
         const onStop = () => {
             dockerApi.containerStop(container)
-                .then(() => startContainerLs(true))
+                .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been stopped"))
                 .catch(e => console.error(e))
                 .catch(onError);
         }
         const onDelete = () => {
             dockerApi.containerRm(container)
-                .then(() => startContainerLs(true))
+                .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been deleted"))
                 .catch(e => console.error(e))
                 .catch(onError);
@@ -128,7 +128,7 @@ function DockerContainers({ data, eventKey }: Props) {
     return (
         <>
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => startContainerLs() }>
+                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchContainerLs() }>
                     Containers
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>

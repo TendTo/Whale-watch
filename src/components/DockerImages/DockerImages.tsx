@@ -49,19 +49,19 @@ function detailsConverter(imageDetails: ImageInspectInfo | undefined) {
 function DockerImages({ data, eventKey }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
-    const [imagesLs, setImagesLs] = useState<ImageInfo[]>();
+    const [imageLs, setImageLs] = useState<ImageInfo[]>();
     const [imagesDetails, setImagesDetails] = useState<ImageInspectInfo>();
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
 
-    const imageLs = (force = false) => {
+    const fetchImageLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.imageLs().then(setImagesLs).catch(e => console.error(e));
+            dockerApi.imageLs().then(setImageLs).catch(e => console.error(e));
         }
     }
 
-    const imageElements = imagesLs?.map((image, idx) => {
+    const imageElements = imageLs?.map((image, idx) => {
         const onRun = () => {
             dockerApi.containerCreate(image)
                 .then(() => toast("A new container has been created"))
@@ -76,7 +76,7 @@ function DockerImages({ data, eventKey }: Props) {
         }
         const onDelete = () => {
             dockerApi.imageRm(image)
-                .then(() => imageLs(true))
+                .then(() => fetchImageLs(true))
                 .then(() => toast("The image has been deleted"))
                 .catch(e => console.error(e))
                 .catch(() => toast("An error has occurred", { contentClassName: "text-danger" }));
@@ -106,14 +106,14 @@ function DockerImages({ data, eventKey }: Props) {
     return (
         <>
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => imageLs()}>
+                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchImageLs()}>
                     Images
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
                         {loading && <Spinner animation="border" size="sm" />}
-                        {!loading && imagesLs === undefined && <p>No images found</p>}
-                        {!loading && imagesLs && (
+                        {!loading && imageLs === undefined && <p>No images found</p>}
+                        {!loading && imageLs && (
                             <table className="table table-hover">
                                 <thead>
                                     <tr>

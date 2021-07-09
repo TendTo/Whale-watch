@@ -7,19 +7,7 @@ import { DockerRemoteContext } from "../../context/DockerRemoteContext";
 import { DockerRemoteKey } from '../../types/DockerTypes';
 import DockerImages from "../DockerImages/DockerImages";
 import DockerContainers from "../DockerContainers/DockerContainers";
-
-/**
- * Shows some minimal informations to check if the .pem file provided by the user is correct
- * @param value value among the .pem files provided by the user
- * @returns first 7 letters used to identify the .pem file
- */
-function showPem(value: string) {
-    const lines = value.split("\n");
-    if (lines.length < 2) {
-        return value.slice(0, 7);
-    }
-    return lines[1].slice(0, 7);
-}
+import DockerVolumes from "../DockerVolumes/DockerVolumes";
 
 function DockerRemoteDetails() {
     const dockerRemoteContextData = useContext(DockerRemoteContext);
@@ -36,10 +24,14 @@ function DockerRemoteDetails() {
     }
 
     return (
-        <Accordion defaultActiveKey="0">
-            <DockerImages data={dockerRemoteData} eventKey="0"/>
-            <DockerContainers data={dockerRemoteData} eventKey="1"></DockerContainers>
-        </Accordion>
+        <>
+        <h4>{`${dockerRemoteData.host}:${dockerRemoteData.port}`}</h4>
+            <Accordion >
+                <DockerImages data={dockerRemoteData} eventKey="0" />
+                <DockerContainers data={dockerRemoteData} eventKey="1"></DockerContainers>
+                <DockerVolumes data={dockerRemoteData} eventKey="2"></DockerVolumes>
+            </Accordion>
+        </>
     );
 }
 
