@@ -81,7 +81,7 @@ function DockerRemoteForm() {
 
                     <Form id="dockerRemoteForm" onSubmit={handleSubmit(onSubmit)}>
                         <Row>
-                            <Col xs="11">
+                            <Col xs={11}>
                                 <Form.Group controlId="dockerRemoteForm.local">
                                     <Form.Check
                                         disabled
@@ -92,7 +92,7 @@ function DockerRemoteForm() {
                                     />
                                 </Form.Group>
                             </Col>
-                            <Col>
+                            <Col xs={1}>
                                 <OverlayTrigger placement="right" delay={{ show: 150, hide: 300 }} overlay={infoTooltip}>
                                     <i className="fa fa-2x fa-question-circle"></i>
                                 </OverlayTrigger>

@@ -1,0 +1,15 @@
+.DockerImages-actions {
+    margin: 0 2px 0 2px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+.DockerImages-image-id {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

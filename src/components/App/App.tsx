@@ -1,12 +1,11 @@
 import React from 'react';
+import {
+  BrowserRouter as Router, Route, Switch
+} from 'react-router-dom';
 import DockerRemoteContextProvider from '../../context/DockerRemoteContext';
+import DockerRemoteDetails from '../DockerRemoteDetails/DockerRemoteDetails';
 import DockerRemoteList from '../DockerRemoteList/DockerRemoteList';
 import MainNavbar from '../MainNavbar/MainNavbar';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom';
 import './App.css';
 
 function App() {
@@ -19,7 +18,7 @@ function App() {
           <div className="App-main">
             <Switch>
               <Route exact path="/" children={<DockerRemoteList />} />
-              <Route exact path="/:docker" children={<DockerRemoteList />} />
+              <Route exact path="/:dockerRemoteKey" children={<DockerRemoteDetails />} />
             </Switch>
           </div>
         </DockerRemoteContextProvider>

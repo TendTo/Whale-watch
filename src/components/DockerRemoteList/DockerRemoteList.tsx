@@ -36,7 +36,7 @@ function DockerRemoteList() {
                 <Card.Body>
                     <Card.Text>
                         <Row>
-                            <Col xs={8}>
+                            <Col xs={9}>
                                 Host: <b>{value.host}</b><br></br>
                                 Port: <b>{value.port}</b><br></br>
                                 {value.ca && (<>Certificate Authority: <b>{showPem(value.ca)}</b><br></br></>)}
