@@ -1,0 +1,69 @@
+#toast_container * {
+    box-sizing: border-box;
+}
+
+.toast-list {
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    z-index: 1000;
+    line-height: 1.5;
+    text-align: center;
+    transform: translateX(-50%) translateZ(0);
+}
+
+.toast-list.left {
+    left: 30px;
+    text-align: left;
+    transform: translateX(0) translateZ(0);
+}
+
+.toast-list.right {
+    right: 30px;
+    left: auto;
+    text-align: right;
+    transform: translateX(0) translateZ(0);
+}
+
+.toast-message {
+    opacity: 0;
+    margin-bottom: 10px;
+    font-size: 0;
+    transition: height 0.3s, opacity 0.3s, transform 0.3s;
+}
+
+.toast-content {
+    display: inline-block;
+    overflow: hidden;
+    min-width: 290px;
+    padding: 12px 22px;
+    background: rgba(0, 0, 10, 0.8);
+    box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 40px;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.toast-enter {
+    height: 0;
+}
+
+.toast-enter-active {
+    opacity: 1;
+}
+
+.toast-enter-done {
+    opacity: 1;
+}
+
+.toast-exit-active {
+    transform: translateY(-10px);
+}
