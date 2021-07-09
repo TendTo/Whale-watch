@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import React, { useContext } from 'react';
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { DockerRemoteContext } from '../../context/DockerRemoteContext';
-import { DockerRemoteData, DockerRemoteContextValue } from '../../types/DockerTypes';
+import { DockerRemoteContextValue, DockerRemoteData } from '../../types/DockerTypes';
 import DockerRemoteList from './DockerRemoteList';
 
 
@@ -23,17 +24,19 @@ test('DockerRemoteList shows default value', () => {
 })
 
 test('DockerRemoteList shows one item', () => {
-  contextRender(<DockerRemoteList />, {
+  contextRender(
+    <Router><DockerRemoteList /></Router>, {
     protocol: "http",
     host: "localhost",
     port: 2375
-  });
+  }
+  );
   expect(screen.getByText(/localhost:2375/i)).toBeInTheDocument();
   //expect(screen.getByText(/remotehost:2375/i)).toBeInTheDocument();
 });
 
 test('DockerRemoteList shows more items', () => {
-  contextRender(<DockerRemoteList />, {
+  contextRender(<Router><DockerRemoteList /></Router>, {
     protocol: "http",
     host: "localhost",
     port: 2375
