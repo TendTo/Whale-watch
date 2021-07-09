@@ -24,3 +24,5 @@ export interface DockerRemoteContextValue {
 export interface DockerRemoteKey {
     dockerRemoteKey: string
 }
+
+export type FetchMethod = "GET" | "POST" | "DELETE";
