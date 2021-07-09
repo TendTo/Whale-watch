@@ -1,0 +1,19 @@
+.DockerNetworks-actions {
+    margin: 0 2px 0 2px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 40px);
+    grid-auto-rows: auto;
+    gap: 14px;
+    justify-content: center;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.DockerNetworks-ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

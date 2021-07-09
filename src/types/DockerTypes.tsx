@@ -26,3 +26,7 @@ export interface DockerRemoteKey {
 }
 
 export type FetchMethod = "GET" | "POST" | "DELETE";
+
+export interface QueryParams {
+    [key: string]: string | number
+}

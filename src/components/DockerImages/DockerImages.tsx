@@ -1,19 +1,36 @@
 import React, { useContext, useState } from "react";
+import { AccordionContext } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import Spinner from "react-bootstrap/Spinner";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
 import { ImageInfo, ImageInspectInfo } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
 import toast from "../Toast/Toast";
 import './DockerImages.css';
-import { AccordionContext, useAccordionToggle } from "react-bootstrap";
 
 interface Props {
     eventKey: string
     data: DockerRemoteData
+}
+
+function onError(e: Error) {
+    console.error(e);
+    let errorMessage = "An error has occurred.";
+    switch (e.message.slice(0, 3)) {
+        case "403":
+            errorMessage = "Forbidden operation."
+            break;
+        case "404":
+            errorMessage = "Resource not found."
+            break;
+        case "409":
+            errorMessage = "A conflict has emerged."
+            break;
+    }
+    toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
 }
 
 function sizeConverter(size: number) {
@@ -50,7 +67,7 @@ function DockerImages({ data, eventKey }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
     const [imageLs, setImageLs] = useState<ImageInfo[]>();
-    const [imagesDetails, setImagesDetails] = useState<ImageInspectInfo>();
+    const [imageDetails, setImageDetails] = useState<ImageInspectInfo>();
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
 
@@ -65,21 +82,18 @@ function DockerImages({ data, eventKey }: Props) {
         const onRun = () => {
             dockerApi.containerCreate(image)
                 .then(() => toast("A new container has been created"))
-                .catch(e => console.error(e))
-                .catch(() => toast("An error has occurred", { contentClassName: "text-danger" }));
+                .catch(onError);
         }
         const onInspect = () => {
             dockerApi.imageInspect(image)
-                .then((details) => setImagesDetails(details))
-                .catch(e => console.error(e))
-                .catch(() => toast("An error has occurred", { contentClassName: "text-danger" }));
+                .then((details) => setImageDetails(details))
+                .catch(onError);
         }
         const onDelete = () => {
             dockerApi.imageRm(image)
                 .then(() => fetchImageLs(true))
                 .then(() => toast("The image has been deleted"))
-                .catch(e => console.error(e))
-                .catch(() => toast("An error has occurred", { contentClassName: "text-danger" }));
+                .catch(onError);
         }
 
         return (
@@ -107,7 +121,7 @@ function DockerImages({ data, eventKey }: Props) {
         <>
             <Card>
                 <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchImageLs()}>
-                    Images
+                    <h5>Images</h5>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
@@ -131,14 +145,14 @@ function DockerImages({ data, eventKey }: Props) {
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>
-            <Modal dialogClassName="modal-lg" show={imagesDetails !== undefined} onHide={() => setImagesDetails(undefined)}>
+            <Modal dialogClassName="modal-lg" show={imageDetails !== undefined} onHide={() => setImageDetails(undefined)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{imagesDetails?.RepoTags} details</Modal.Title>
+                    <Modal.Title>{imageDetails?.RepoTags} details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <pre>
                         <code>
-                            {detailsConverter(imagesDetails)}
+                            {detailsConverter(imageDetails)}
                         </code>
                     </pre>
                 </Modal.Body>

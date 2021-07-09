@@ -6,10 +6,10 @@ import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
-import { VolumeInspectInfo, VolumeList } from '../../types/DockerApiTypes';
+import { NetworkInspectInfo } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
 import toast from "../Toast/Toast";
-import './DockerVolumes.css';
+import './DockerNetworks.css';
 
 interface Props {
     eventKey: string
@@ -33,46 +33,49 @@ function onError(e: Error) {
     toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
 }
 
-function detailsConverter(imageDetails: VolumeInspectInfo | undefined) {
+function detailsConverter(imageDetails: NetworkInspectInfo | undefined) {
     if (imageDetails === undefined)
         return ""
     return JSON.stringify(imageDetails, null, 4);
 }
 
-function DockerVolumes({ data, eventKey }: Props) {
+function DockerNetworks({ data, eventKey }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
-    const [volumeLs, setVolumeLs] = useState<VolumeList>();
-    const [volumeDetails, setVolumeDetails] = useState<VolumeInspectInfo>();
+    const [NetworkLs, setNetworkLs] = useState<NetworkInspectInfo[]>();
+    const [NetworkDetails, setNetworksDetails] = useState<NetworkInspectInfo>();
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
 
-    const fetchVolumeLs = (force = false) => {
+    const fetchNetworkLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.volumeLs().then(setVolumeLs).catch(e => console.error(e));
+            dockerApi.networkLs()
+                .then(setNetworkLs)
+                .catch(onError);
         }
     }
 
-    const imageElements = volumeLs?.Volumes.map((volume, idx) => {
+    const networkElements = NetworkLs?.map((network, idx) => {
         const onInspect = () => {
-            dockerApi.volumeInpect(volume)
-                .then((details) => setVolumeDetails(details))
-                .catch(onError);
+            dockerApi.networkInpect(network)
+                .then((details) => setNetworksDetails(details))
+                .catch(onError)
         }
         const onDelete = () => {
-            dockerApi.volumeRm(volume)
-                .then(() => fetchVolumeLs(true))
-                .then(() => toast("The volume has been deleted"))
-                .catch(onError);
+            dockerApi.networkRm(network)
+                .then(() => fetchNetworkLs(true))
+                .then(() => toast("The network has been deleted"))
+                .catch(onError)
         }
 
         return (
             <tr key={idx}>
-                <td className="DockerVolumes-name">{volume.Name}</td>
-                <td>{volume.Driver}</td>
-                <td className="DockerVolumes-name">{volume.Mountpoint}</td>
-                <td className="DockerVolumes-actions" >
+                <td>{network.Name}</td>
+                <td className="DockerNetworks-ellipsis">{network.Id}</td>
+                <td>{network.Driver}</td>
+                <td>{network.Scope}</td>
+                <td className="DockerNetworks-actions" >
                     <Button variant="info lg" onClick={onInspect}>
                         <i className="fa fa-eye"></i>
                     </Button>
@@ -87,38 +90,39 @@ function DockerVolumes({ data, eventKey }: Props) {
     return (
         <>
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchVolumeLs()}>
-                    <h5>Volumes</h5>
+                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchNetworkLs()}>
+                    <h5>Networks</h5>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
                         {loading && <Spinner animation="border" size="sm" />}
-                        {!loading && volumeLs === undefined && <p>No images found</p>}
-                        {!loading && volumeLs && (
+                        {!loading && NetworkLs === undefined && <p>No images found</p>}
+                        {!loading && NetworkLs && (
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th scope="col">Network ID</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Driver</th>
-                                        <th scope="col">Mountpoint</th>
+                                        <th scope="col">Scope</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {imageElements}
+                                    {networkElements}
                                 </tbody>
                             </table>)}
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>
-            <Modal dialogClassName="modal-lg" show={volumeDetails !== undefined} onHide={() => setVolumeDetails(undefined)}>
+            <Modal dialogClassName="modal-lg" show={NetworkDetails !== undefined} onHide={() => setNetworksDetails(undefined)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{volumeDetails?.Name} details</Modal.Title>
+                    <Modal.Title>{NetworkDetails?.Name} details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <pre>
                         <code>
-                            {detailsConverter(volumeDetails)}
+                            {detailsConverter(NetworkDetails)}
                         </code>
                     </pre>
                 </Modal.Body>
@@ -127,4 +131,4 @@ function DockerVolumes({ data, eventKey }: Props) {
     );
 }
 
-export default DockerVolumes;
+export default DockerNetworks;

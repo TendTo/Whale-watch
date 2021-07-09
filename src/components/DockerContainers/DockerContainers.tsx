@@ -1,30 +1,36 @@
 import React, { useContext, useState } from "react";
+import { AccordionContext } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import Spinner from "react-bootstrap/Spinner";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
-import { ContainerInfo, ContainerInspectInfo, ImageInfo, ImageInspectInfo } from '../../types/DockerApiTypes';
+import { ContainerInfo, ContainerInspectInfo } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
 import toast from "../Toast/Toast";
 import './DockerContainers.css';
-import { AccordionContext } from "react-bootstrap";
 
 interface Props {
     eventKey: string
     data: DockerRemoteData
 }
 
-function sizeConverter(size: number) {
-    const dimensions = ['B', 'KB', 'MB', 'GB', 'TB'];
-    for (let dimension of dimensions) {
-        if (size / 1000 < 1)
-            return `${size.toFixed(2)} ${dimension}`;
-        else
-            size /= 1000;
+function onError(e: Error) {
+    console.error(e);
+    let errorMessage = "An error has occurred.";
+    switch (e.message.slice(0, 3)) {
+        case "403":
+            errorMessage = "Forbidden operation."
+            break;
+        case "404":
+            errorMessage = "Resource not found."
+            break;
+        case "409":
+            errorMessage = "A conflict has emerged."
+            break;
     }
-    return `${size.toFixed(2)} TB`;
+    toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
 }
 
 function timeConverter(unixTime: number) {
@@ -51,9 +57,8 @@ function DockerContainers({ data, eventKey }: Props) {
     const [loading, setLoading] = useState(false);
     const [containerLs, setContainerLs] = useState<ContainerInfo[]>();
     const [containerDetails, setContainerDetails] = useState<ContainerInspectInfo>();
+    const [containerLogs, setContainerLogs] = useState<{ name: string, logs: string }>();
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-
-    const onError = () => toast("An error has occurred\nCheck the console to know more", { contentClassName: "text-danger" })
 
     const fetchContainerLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
@@ -62,25 +67,27 @@ function DockerContainers({ data, eventKey }: Props) {
         }
     }
 
-    const containersElements = containerLs?.map(container => {
+    const containersElements = containerLs?.map((container, idx) => {
         const onRun = () => {
             dockerApi.containerRun(container)
                 .then(() => fetchContainerLs(true))
                 .then(() => toast("A new container has started running"))
-                .catch(e => console.error(e))
                 .catch(onError);
         }
         const onInspect = () => {
             dockerApi.containerInspect(container)
                 .then(setContainerDetails)
-                .catch(e => console.error(e))
+                .catch(onError);
+        }
+        const onLogs = () => {
+            dockerApi.containerLogs(container)
+                .then((logs) => setContainerLogs({ name: container.Names ? container.Names[0] : container.Id, logs: logs }))
                 .catch(onError);
         }
         const onRestart = () => {
             dockerApi.containerRestart(container)
                 .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been restarted"))
-                .catch(e => console.error(e))
                 .catch(onError);
         }
         const onStop = () => {
@@ -99,8 +106,8 @@ function DockerContainers({ data, eventKey }: Props) {
         }
 
         return (
-            <tr>
-                <td>{container.Names.map(e=> e.slice(1, e.length))}</td>
+            <tr key={idx}>
+                <td>{container.Names.map(e => e.slice(1))}</td>
                 <td>{container.Image}</td>
                 <td>{timeConverter(container.Created)}</td>
                 <td>{container.Status}</td>
@@ -110,6 +117,9 @@ function DockerContainers({ data, eventKey }: Props) {
                     </Button>
                     <Button variant="info lg" onClick={onInspect}>
                         <i className="fa fa-eye"></i>
+                    </Button>
+                    <Button variant="light lg" onClick={onLogs}>
+                        <i className="fa fa-file-text-o"></i>
                     </Button>
                     <Button variant="primary lg" onClick={onRestart}>
                         <i className="fa fa-refresh"></i>
@@ -128,8 +138,8 @@ function DockerContainers({ data, eventKey }: Props) {
     return (
         <>
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchContainerLs() }>
-                    Containers
+                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchContainerLs()}>
+                    <h5>Containers</h5>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
@@ -155,12 +165,24 @@ function DockerContainers({ data, eventKey }: Props) {
             </Card>
             <Modal dialogClassName="modal-lg" show={containerDetails !== undefined} onHide={() => setContainerDetails(undefined)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{containerDetails?.Name} details</Modal.Title>
+                    <Modal.Title>{containerDetails?.Name.slice(1)} details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <pre>
                         <code>
                             {detailsConverter(containerDetails)}
+                        </code>
+                    </pre>
+                </Modal.Body>
+            </Modal >
+            <Modal dialogClassName="modal-lg" show={containerLogs !== undefined} onHide={() => setContainerLogs(undefined)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{containerLogs?.name.slice(1)} details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <pre>
+                        <code>
+                            {containerLogs?.logs}
                         </code>
                     </pre>
                 </Modal.Body>

@@ -8,6 +8,7 @@ import { DockerRemoteKey } from '../../types/DockerTypes';
 import DockerImages from "../DockerImages/DockerImages";
 import DockerContainers from "../DockerContainers/DockerContainers";
 import DockerVolumes from "../DockerVolumes/DockerVolumes";
+import DockerNetworks from "../DockerNetworks/DockerNetworks";
 
 function DockerRemoteDetails() {
     const dockerRemoteContextData = useContext(DockerRemoteContext);
@@ -30,6 +31,7 @@ function DockerRemoteDetails() {
                 <DockerImages data={dockerRemoteData} eventKey="0" />
                 <DockerContainers data={dockerRemoteData} eventKey="1"></DockerContainers>
                 <DockerVolumes data={dockerRemoteData} eventKey="2"></DockerVolumes>
+                <DockerNetworks data={dockerRemoteData} eventKey="3"></DockerNetworks>
             </Accordion>
         </>
     );
