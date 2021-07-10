@@ -74,7 +74,8 @@ const Toast = ({
       const height = messageDOM.current.clientHeight;
       messageDOM.current.style.height = '0px';
       setTimeout(() => {
-        messageDOM.current.style.height = `${height}px`;
+        if (messageDOM && messageDOM.current)
+          messageDOM.current.style.height = `${height}px`;
       }, 0);
     }
   });

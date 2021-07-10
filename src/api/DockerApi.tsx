@@ -6,6 +6,7 @@ class DockerApi {
     private force = { force: "true" };
     private all = { all: "true" };
     private allLogs = { stderr: "true", stdout: "true", tail: 100 };
+    protocol: "https" | "http"
     host: string
     port: number
     ca?: string
@@ -14,10 +15,11 @@ class DockerApi {
     setLoading: (isLoading: boolean) => void
 
     static fromDockerRemoteData(data: DockerRemoteData, setLoading: (isLoading: boolean) => void) {
-        return new DockerApi(data.host, data.port, setLoading, data.ca, data.cert, data.key);
+        return new DockerApi(data.protocol, data.host, data.port, setLoading, data.ca, data.cert, data.key);
     }
 
-    constructor(host: string, port: number, setLoading: (isLoading: boolean) => void, ca?: string, cert?: string, key?: string) {
+    constructor(protocol: "https" | "http", host: string, port: number, setLoading: (isLoading: boolean) => void, ca?: string, cert?: string, key?: string) {
+        this.protocol = protocol
         this.host = host;
         this.port = port;
         this.ca = ca;
@@ -28,10 +30,6 @@ class DockerApi {
 
     get baseAddr(): string {
         return `${this.host}:${this.port}`;
-    }
-
-    get protocol(): string {
-        return this.ca && this.cert && this.key ? "https" : "http";
     }
 
     get baseUrl(): string {
@@ -61,9 +59,7 @@ class DockerApi {
             ca: this.ca,
             body: body ? JSON.stringify(body) : undefined
         };
-        console.log("https");
-        console.log(options);
-        
+
         const promise: Promise<HttpsResponse> = new Promise((resolve, reject) => {
             const req = https.request(options, (res) => {
                 res.setEncoding('utf8');
@@ -128,7 +124,7 @@ class DockerApi {
 
     async apiRequestText(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
-        if (result === null || result?.status === undefined ||result?.status >= 400)
+        if (result === null || result?.status === undefined || result?.status >= 400)
             throw Error(`${result?.status} - apiRequestText failed`);
         const resultObj = await result?.text();
         this.setLoading(false);

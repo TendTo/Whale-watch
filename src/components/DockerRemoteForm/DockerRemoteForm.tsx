@@ -32,17 +32,19 @@ function DockerRemoteForm() {
     const history = useHistory();
 
     const [show, setShow] = useState(false);
-    const [local, setLocal] = useState(false);
     const [fail, setFail] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [useTls, setUseTls] = useState(true);
     const { register, handleSubmit, reset } = useForm({ defaultValues: defaultData });
     const dockerRemoteContext = useContext(DockerRemoteContext);
+    const local = false;
 
     const handleOpen = () => setShow(true);
     const handleClose = () => { setSuccess(false); setFail(false); reset(defaultData); setShow(false); };
 
     const onTest = (data: DockerRemoteData) => {
+        data.protocol = useTls ? "https" : "http";
 
         const onFail = () => {
             setSuccess(false);
@@ -61,6 +63,7 @@ function DockerRemoteForm() {
     }
 
     const onSubmit = (data: DockerRemoteData) => {
+        data.protocol = useTls ? "https" : "http";
         dockerRemoteContext?.addDockerRemote(data);
         handleClose();
         if (location.pathname !== "/")
@@ -84,16 +87,16 @@ function DockerRemoteForm() {
                             <Col xs={11}>
                                 <Form.Group controlId="dockerRemoteForm.local">
                                     <Form.Check
-                                        disabled
+                                        checked={useTls}
                                         type="switch"
                                         id="dockerRemoteForm.local"
-                                        label={local ? "Local Docker" : "Remote Docker"}
-                                        onChange={() => setLocal(!local)}
+                                        label={useTls ? "Using HTTPS" : "Using HTTP"}
+                                        onChange={() => setUseTls(!useTls)}
                                     />
                                 </Form.Group>
                             </Col>
                             <Col xs={1}>
-                                <OverlayTrigger placement="right" delay={{ show: 150, hide: 300 }} overlay={infoTooltip}>
+                                <OverlayTrigger placement="left" delay={{ show: 150, hide: 300 }} overlay={infoTooltip}>
                                     <i className="fa fa-2x fa-question-circle"></i>
                                 </OverlayTrigger>
                             </Col>
@@ -108,24 +111,29 @@ function DockerRemoteForm() {
                                         </Form.Group>
                                     </Col>
                                     <Col xs="3">
-                                        <Form.Group controlId="dockerRemoteForm.host">
+                                        <Form.Group controlId="dockerRemoteForm.port">
                                             <Form.Label className="DockerRemoteForm-required-label">Remote port</Form.Label>
                                             <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={strings.placeholderPort} required={!local} />
                                         </Form.Group>
                                     </Col>
                                 </Row>
-                                <Form.Group controlId="dockerRemoteForm.ca">
-                                    <Form.Label>Certificate Authority (ca.pem)</Form.Label>
-                                    <Form.Control {...register("ca")} as="textarea" rows={4} placeholder={strings.placeholderCa} />
-                                </Form.Group>
-                                <Form.Group controlId="dockerRemoteForm.cert">
-                                    <Form.Label>Certificate (cert.pem)</Form.Label>
-                                    <Form.Control {...register("cert")} as="textarea" rows={4} placeholder={strings.placeholderCert} />
-                                </Form.Group>
-                                <Form.Group controlId="dockerRemoteForm.key">
-                                    <Form.Label>Key (key.pem)</Form.Label>
-                                    <Form.Control {...register("key")} as="textarea" rows={4} placeholder={strings.placeholderKey} />
-                                </Form.Group>
+                                {
+                                    useTls && (<>
+                                        <Form.Group controlId="dockerRemoteForm.ca">
+                                            <Form.Label>Certificate Authority (ca.pem)</Form.Label>
+                                            <Form.Control {...register("ca")} as="textarea" rows={4} placeholder={strings.placeholderCa} />
+                                        </Form.Group>
+                                        <Form.Group controlId="dockerRemoteForm.cert">
+                                            <Form.Label>Certificate (cert.pem)</Form.Label>
+                                            <Form.Control {...register("cert")} as="textarea" rows={4} placeholder={strings.placeholderCert} />
+                                        </Form.Group>
+                                        <Form.Group controlId="dockerRemoteForm.key">
+                                            <Form.Label>Key (key.pem)</Form.Label>
+                                            <Form.Control {...register("key")} as="textarea" rows={4} placeholder={strings.placeholderKey} />
+                                        </Form.Group>
+                                    </>)
+                                }
+
                             </>
                         )}
                         {local && (

@@ -5,7 +5,7 @@
     "placeholderHost": "hostname.com",
     "placeholderPort": "2375",
     "placeholderSocket": "/var/run/docker.sock",
-    "infoTooltip": "Connect to a new remote Docker daemon.\nIf only host and port are specified, an http connection will be enstablished.\nIf all fileds are filled, an HTTPS connection will be used instead.\nFor more informations, see the README.md",
+    "infoTooltip": "Connect to a new remote Docker daemon.\nIf the HTTP connection is selected, only host and post fields will be considered.\nThe remaining fileds are used for a mutual HTTPS connection.\nFor more informations on the other fields, see the README.md",
     "hostInfoTooltip": "Host name of the remote machine running the Docker daemon.\nCan be an IP address.",
     "portInfoTooltip": "Port the Docker daemon will listen to. Defaults to 2375."
 }

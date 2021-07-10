@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  BrowserRouter as Router, Route, Switch
+  HashRouter as Router, Route, Switch
 } from 'react-router-dom';
 import DockerRemoteContextProvider from '../../context/DockerRemoteContext';
 import DockerRemoteDetails from '../DockerRemoteDetails/DockerRemoteDetails';
