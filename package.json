@@ -1,5 +1,6 @@
 {
   "name": "whale-watch",
+  "homepage": "https://tendto.github.io/Whale-watch/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
