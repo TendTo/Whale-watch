@@ -1,4 +1,5 @@
-import { DockerRemoteData, FetchMethod, QueryParams } from '../types/DockerTypes'
+import https from 'https'
+import { DockerRemoteData, FetchMethod, QueryParams, HttpsResponse } from '../types/DockerTypes'
 import { ImageInfo, NetworkInspectInfo, ImageRemoveInfo, ImageInspectInfo, ServiceCreateResponse, ContainerInfo, ContainerInspectInfo, VolumeInspectInfo, VolumeList } from '../types/DockerApiTypes'
 
 class DockerApi {
@@ -37,22 +38,71 @@ class DockerApi {
         return `${this.protocol}://${this.baseAddr}`;
     }
 
+    private async _httpRequest(path: string, method: FetchMethod = "GET", body?: object) {
+        const url = `${this.baseUrl}${path}`;
+        const result = await fetch(url, {
+            method: method,
+            headers: body ? {
+                'Content-Type': 'application/json'
+            } : {},
+            body: body ? JSON.stringify(body) : undefined
+        });
+        return result;
+    }
+
+    private async _httpsRequest(path: string, method: FetchMethod = "GET", body?: object) {
+        const options = {
+            hostname: this.host,
+            port: this.port,
+            path: path,
+            method: method,
+            key: this.key,
+            cert: this.cert,
+            ca: this.ca,
+            body: body ? JSON.stringify(body) : undefined
+        };
+        console.log("https");
+        console.log(options);
+        
+        const promise: Promise<HttpsResponse> = new Promise((resolve, reject) => {
+            const req = https.request(options, (res) => {
+                res.setEncoding('utf8');
+                let responseBody = '';
+
+                res.on('data', (chunk) => {
+                    responseBody += chunk;
+                });
+
+                res.on('end', () => {
+                    const response = {
+                        status: res.statusCode,
+                        text: () => responseBody,
+                        json: () => JSON.parse(responseBody)
+                    }
+                    resolve(response);
+                });
+            });
+
+            req.on('error', (err) => {
+                reject(err);
+            });
+
+            req.end();
+        });
+        return await promise;
+    }
+
     private async _apiRequest(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         try {
             this.setLoading(true);
-            const url = queyParams
-                ? `${this.baseUrl}/${endpoint}?${(Object.entries(queyParams)).map(([key, value]) => `${key}=${value}`).join("&")}`
-                : `${this.baseUrl}/${endpoint}`
-            console.debug(`Request to ${url} endpoint`);
-            const result = await fetch(url, {
-                method: method,
-                headers: body ? {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                } : {},
-                body: body ? JSON.stringify(body) : undefined
-            });
-            return result;
+            const path = queyParams
+                ? `/${endpoint}?${(Object.entries(queyParams)).map(([key, value]) => `${key}=${value}`).join("&")}`
+                : `/${endpoint}`
+            console.debug(`Request to ${this.baseUrl}${path} endpoint`);
+            if (this.protocol === "https")
+                return await this._httpsRequest(path, method, body);
+            else
+                return await this._httpRequest(path, method, body);
         } catch (e) {
             this.setLoading(false);
             console.error(e);
@@ -63,13 +113,13 @@ class DockerApi {
     async apiRequest(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
         this.setLoading(false);
-        if (result === null || result?.status >= 400)
+        if (result === null || result?.status === undefined || result?.status >= 400)
             throw Error(`${result?.status} - apiRequest failed`);
     }
 
     async apiRequestJson(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
-        if (result === null || result?.status >= 400)
+        if (result === null || result?.status === undefined || result?.status >= 400)
             throw Error(`${result?.status} - apiRequestJson failed`);
         const resultObj = await result?.json();
         this.setLoading(false);
@@ -78,7 +128,7 @@ class DockerApi {
 
     async apiRequestText(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
-        if (result === null || result?.status >= 400)
+        if (result === null || result?.status === undefined ||result?.status >= 400)
             throw Error(`${result?.status} - apiRequestText failed`);
         const resultObj = await result?.text();
         this.setLoading(false);
@@ -86,7 +136,7 @@ class DockerApi {
     }
 
     async imageCreate(nameTag: string, ...params: { key: string, value: string }[]): Promise<void> {
-        const matches = nameTag.match(/(.*?)(:[^:]+)?$/);        
+        const matches = nameTag.match(/(.*?)(:[^:]+)?$/);
         if (matches === null || matches.length < 2) {
             throw Error("404 - imageCreate has failed");
         }

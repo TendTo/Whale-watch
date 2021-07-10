@@ -30,3 +30,9 @@ export type FetchMethod = "GET" | "POST" | "DELETE";
 export interface QueryParams {
     [key: string]: string | number
 }
+
+export interface HttpsResponse {
+    status?: number
+    text: () => string
+    json: () => any
+}
