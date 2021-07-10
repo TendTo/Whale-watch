@@ -8,7 +8,9 @@ Simple browser based Docker GUI. It can be used to connect to remote Docker inst
 
 ### Requirements
 - [docker](https://www.docker.com/)
+
 ### Steps
+
 #### HTTP - Simple but unsecure
 The simplest way to make the Docker daemon listen for remote connections is with the following command:
 ```bash
@@ -18,7 +20,7 @@ Where
 - $BROWSER_ADDRESS is the github page address or the address of the machine you are using this program on
 - $PORT is the port you want to expose. The default one is port 2375
 You may need to stop the docker.service if it is already running with
-```
+```bash
 sudo systemctl stop docker.service
 ```
 
