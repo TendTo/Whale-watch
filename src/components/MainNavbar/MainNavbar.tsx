@@ -14,7 +14,7 @@ function MainNavbar() {
                 <Nav className="mr-auto">
                     <DockerRemoteForm></DockerRemoteForm>
                 </Nav>
-                <Button variant="outline-light"><i className="fa fa-github"></i></Button>
+                <Button href="https://github.com/TendTo/Whale-watch" variant="outline-light"><i className="fa fa-github"></i></Button>
             </Navbar.Collapse>
         </Navbar>
     );

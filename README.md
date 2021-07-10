@@ -28,7 +28,7 @@ sudo systemctl stop docker.service
 To make the connection more secure, you could use TLS (HTTPS) to protect the traffic to the Docker daemon socket.  
 Only the server is verified, but not the client.  
 The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
-See the **Larn Mode** session for more details. In short:
+See the **Learn more** session for more details. In short:
 ```bash
 # Generate a pair of keys for the Certificate Authority
 openssl genrsa -aes256 -out ca-key.pem 4096
@@ -74,7 +74,7 @@ sudo systemctl stop docker.service
 To make the connection even more secure, you could use TLS (HTTPS) to protect the Docker daemon socket.  
 This mode also verifies the user, meaning that only the users with the correct certificates can access the socket.  
 The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
-See the **Larn Mode** session for more details. In short:
+See the **Learn more** session for more details. In short:
 ```bash
 # Generate a pair of keys for the Certificate Authority
 openssl genrsa -aes256 -out ca-key.pem 4096
@@ -128,7 +128,7 @@ You may need to stop the docker.service if it is already running with
 sudo systemctl stop docker.service
 ```
 
-### Learn More
+### Learn more
 The complete documentation can be found [here](https://docs.docker.com/engine/install/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections).  
 Additionally, to make the connection secure, you may want to read [this](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket).
 
@@ -169,6 +169,6 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-### Learn More
+### Learn more
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).  
 To learn React, check out the [React documentation](https://reactjs.org/).

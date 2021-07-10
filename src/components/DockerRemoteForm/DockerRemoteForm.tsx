@@ -72,7 +72,7 @@ function DockerRemoteForm() {
 
     return (
         <>
-            <Button variant="primary" onClick={handleOpen}>
+            <Button variant="success" onClick={handleOpen}>
                 Add Docker remote
             </Button>
 
