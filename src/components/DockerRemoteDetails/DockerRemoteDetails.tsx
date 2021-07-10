@@ -1,8 +1,6 @@
 import React, { useContext } from "react";
-import Card from "react-bootstrap/Card";
 import Accordion from "react-bootstrap/Accordion";
-import Spinner from "react-bootstrap/Spinner";
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { DockerRemoteContext } from "../../context/DockerRemoteContext";
 import { DockerRemoteKey } from '../../types/DockerTypes';
 import DockerImages from "../DockerImages/DockerImages";

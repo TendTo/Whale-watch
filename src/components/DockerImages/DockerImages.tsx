@@ -3,6 +3,7 @@ import { AccordionContext } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
@@ -74,8 +75,20 @@ function DockerImages({ data, eventKey }: Props) {
     const fetchImageLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.imageLs().then(setImageLs).catch(e => console.error(e));
+            dockerApi.imageLs().then(setImageLs).catch(onError);
         }
+    }
+    const onPull = () => {
+        const input = (document.getElementById('dockerImages.tag') as HTMLInputElement);
+        const inputValue = input?.value;
+        
+        if (inputValue === undefined || inputValue === null || inputValue.length === 0 || inputValue.startsWith(":"))
+            return toast("You must specify an image name to pull", { contentClassName: "text-danger" })
+        
+        input.value = "";
+        dockerApi.imageCreate(inputValue)
+            .then(() => toast("A new images is being pulled.\nIt may take a while before it shows here"))
+            .catch(onError);
     }
 
     const imageElements = imageLs?.map((image, idx) => {
@@ -125,6 +138,13 @@ function DockerImages({ data, eventKey }: Props) {
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
+                        <Form.Group className="DockerImages-form" controlId="dockerImages.tag">
+                            <Form.Label className="DockerImages-required-label"><b>Pull image</b></Form.Label>
+                            <Form.Control placeholder="tag:latest" required />
+                            <Button variant="primary" onClick={onPull}>
+                                <i className="fa fa-download"></i>
+                            </Button>
+                        </Form.Group>
                         {loading && <Spinner animation="border" size="sm" />}
                         {!loading && imageLs === undefined && <p>No images found</p>}
                         {!loading && imageLs && (
@@ -141,7 +161,8 @@ function DockerImages({ data, eventKey }: Props) {
                                 <tbody>
                                     {imageElements}
                                 </tbody>
-                            </table>)}
+                            </table>
+                        )}
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

@@ -52,6 +52,17 @@ function detailsConverter(containerDetails: ContainerInspectInfo | undefined) {
     return JSON.stringify(containerDetails, null, 4);
 }
 
+function logsConverter(logs: string | undefined) {
+    if (logs === undefined)
+        return ""
+    return logs.split("\n")
+        .map(e => ({ header: Buffer.from(e.slice(0, 8)), text: e }))
+        .filter(({ header, text }) => header[0] !== 0)
+        .map(({ header, text }, idx) =>
+            <p key={idx} className={`DockerContainers-logs ${header[0] === 2 ? "text-danger" : ""}`}>{header[0] === 1 || header[0] === 2 ? text.slice(8) : text}</p>
+        )
+}
+
 function DockerContainers({ data, eventKey }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
@@ -63,7 +74,7 @@ function DockerContainers({ data, eventKey }: Props) {
     const fetchContainerLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.containerLs().then(setContainerLs).catch(e => console.error(e));
+            dockerApi.containerLs().then(setContainerLs).catch(onError);
         }
     }
 
@@ -94,14 +105,12 @@ function DockerContainers({ data, eventKey }: Props) {
             dockerApi.containerStop(container)
                 .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been stopped"))
-                .catch(e => console.error(e))
                 .catch(onError);
         }
         const onDelete = () => {
             dockerApi.containerRm(container)
                 .then(() => fetchContainerLs(true))
                 .then(() => toast("The container has been deleted"))
-                .catch(e => console.error(e))
                 .catch(onError);
         }
 
@@ -182,7 +191,7 @@ function DockerContainers({ data, eventKey }: Props) {
                 <Modal.Body>
                     <pre>
                         <code>
-                            {containerLogs?.logs}
+                            {logsConverter(containerLogs?.logs)}
                         </code>
                     </pre>
                 </Modal.Body>

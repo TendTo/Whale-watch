@@ -15,3 +15,6 @@ table {
     overflow: hidden;
     white-space: nowrap;
 }
+.DockerContainers-logs{
+    margin-bottom: 0;
+}

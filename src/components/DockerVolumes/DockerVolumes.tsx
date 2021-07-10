@@ -50,7 +50,7 @@ function DockerVolumes({ data, eventKey }: Props) {
     const fetchVolumeLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.volumeLs().then(setVolumeLs).catch(e => console.error(e));
+            dockerApi.volumeLs().then(setVolumeLs).catch(onError);
         }
     }
 

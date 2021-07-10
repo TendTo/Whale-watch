@@ -4,7 +4,7 @@ import { ImageInfo, NetworkInspectInfo, ImageRemoveInfo, ImageInspectInfo, Servi
 class DockerApi {
     private force = { force: "true" };
     private all = { all: "true" };
-    private allLogs = { stderr: "true", stdout: "true", timestamps: "true", tail: 100 };
+    private allLogs = { stderr: "true", stdout: "true", tail: 100 };
     host: string
     port: number
     ca?: string
@@ -43,7 +43,7 @@ class DockerApi {
             const url = queyParams
                 ? `${this.baseUrl}/${endpoint}?${(Object.entries(queyParams)).map(([key, value]) => `${key}=${value}`).join("&")}`
                 : `${this.baseUrl}/${endpoint}`
-            console.log(url);
+            console.debug(`Request to ${url} endpoint`);
             const result = await fetch(url, {
                 method: method,
                 headers: body ? {
@@ -63,13 +63,13 @@ class DockerApi {
     async apiRequest(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
         this.setLoading(false);
-        if (result?.status !== 200 && result?.status !== 204 && result?.status !== 304)
+        if (result === null || result?.status >= 400)
             throw Error(`${result?.status} - apiRequest failed`);
     }
 
     async apiRequestJson(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
-        if (result?.status !== 200 && result?.status !== 204 && result?.status !== 304)
+        if (result === null || result?.status >= 400)
             throw Error(`${result?.status} - apiRequestJson failed`);
         const resultObj = await result?.json();
         this.setLoading(false);
@@ -78,11 +78,22 @@ class DockerApi {
 
     async apiRequestText(endpoint: string, method: FetchMethod = "GET", body?: object, queyParams?: QueryParams) {
         const result = await this._apiRequest(endpoint, method, body, queyParams);
-        if (result?.status !== 200 && result?.status !== 204 && result?.status !== 304)
+        if (result === null || result?.status >= 400)
             throw Error(`${result?.status} - apiRequestText failed`);
         const resultObj = await result?.text();
         this.setLoading(false);
         return resultObj;
+    }
+
+    async imageCreate(nameTag: string, ...params: { key: string, value: string }[]): Promise<void> {
+        const matches = nameTag.match(/(.*?)(:[^:]+)?$/);        
+        if (matches === null || matches.length < 2) {
+            throw Error("404 - imageCreate has failed");
+        }
+        let fromImage = matches[1] || "";
+        fromImage = fromImage.endsWith(":") ? fromImage.slice(0, -1) : fromImage;
+        const tag = matches[2] || "latest";
+        await this.apiRequest("images/create", "POST", undefined, { fromImage: fromImage, tag: tag });
     }
 
     async imageLs(...params: { key: string, value: string }[]): Promise<ImageInfo[]> {

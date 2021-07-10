@@ -17,3 +17,14 @@ table {
     overflow: hidden;
     white-space: nowrap;
 }
+
+.DockerImages-form {
+    display: grid;
+    grid-template-columns: 100px minmax(100px, 500px) 40px;
+    justify-content: center;
+    gap: 10px;
+}
+
+.DockerImages-form > .btn{
+    width: 40px;
+}
