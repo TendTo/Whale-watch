@@ -49,6 +49,7 @@ class DockerApi {
     }
 
     private async _httpsRequest(path: string, method: FetchMethod = "GET", body?: object) {
+        const parsedBody = JSON.stringify(body);
         const options = {
             hostname: this.host,
             port: this.port,
@@ -57,7 +58,10 @@ class DockerApi {
             key: this.key,
             cert: this.cert,
             ca: this.ca,
-            body: body ? JSON.stringify(body) : undefined
+            headers: body ? {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(parsedBody)
+            } : undefined,
         };
 
         const promise: Promise<HttpsResponse> = new Promise((resolve, reject) => {
@@ -82,7 +86,8 @@ class DockerApi {
             req.on('error', (err) => {
                 reject(err);
             });
-
+            if (body)
+                req.write(parsedBody);
             req.end();
         });
         return await promise;
