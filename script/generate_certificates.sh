@@ -14,7 +14,7 @@ openssl genrsa -out server-key.pem 4096
 openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
 
 # Additional connection settings. You may want to add the ip of the host. $HOST should be the same "Common Name" provided before
-echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1,IP:$IP: >> extfile.cnf
+echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1,IP:$HOST_IP: >> extfile.cnf
 echo extendedKeyUsage = serverAuth >> extfile.cnf
 
 # Generate the signed certificate

@@ -9,9 +9,9 @@ Simple browser based Docker GUI. It can be used to connect to remote Docker inst
 ### Requirements
 - [docker](https://www.docker.com/)
 
-### Steps
+You may find some scripts in the _scripts_ folder to automate the following procedures.
 
-#### HTTP - Simple but unsecure
+### HTTP - Simplest - ONLY LOCAL
 The simplest way to make the Docker daemon listen for remote connections is with the following command:
 ```bash
 dockerd --api-cors-header=$BROWSER_ADDRESS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:$PORT
@@ -24,8 +24,9 @@ You may need to stop the docker.service if it is already running with
 sudo systemctl stop docker.service
 ```
 
-#### HTTPS - Complex but secure
-To make the connection secure, you could use TLS (HTTPS) to protect the Docker daemon socket.  
+### HTTPS only server - Medium
+To make the connection more secure, you could use TLS (HTTPS) to protect the traffic to the Docker daemon socket.  
+Only the server is verified, but not the client.  
 The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
 See the **Larn Mode** session for more details. In short:
 ```bash
@@ -41,8 +42,54 @@ openssl genrsa -out server-key.pem 4096
 # Create a certificate request. $HOST should be the same "Common Name" provided before
 openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
 
-# Additional connection settings. You may want to add the ip of the host. $HOST should be the same "Common Name" provided before
-echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1 >> extfile.cnf
+# Additional connection settings. You may want to add the ip of the host. $HOST should be the same "Common Name" provided before, while $HOST_IP is its public ip address
+echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1,IP:$HOST_IP >> extfile.cnf
+echo extendedKeyUsage = serverAuth >> extfile.cnf
+
+# Generate the signed certificate
+openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+```
+To make the Docker daemon listen for remote connections with the certificates use the following command:
+```bash
+dockerd \
+     --api-cors-header=$BROWSER_ADDRESS \
+    --tls \
+    --tlsverify=false \
+    --tlscacert=ca.pem \
+    --tlscert=server-cert.pem \
+    --tlskey=server-key.pem \
+    -H=0.0.0.0:$PORT
+```
+Where 
+- $BROWSER_ADDRESS is the github page address or the address of the machine you are using _Whale watch_ on
+- $PORT is the port you want to expose. The default one is port 2375
+You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
+You may need to stop the docker.service if it is already running with
+```bash
+sudo systemctl stop docker.service
+```
+
+### HTTPS complete - Complex - TODO
+To make the connection even more secure, you could use TLS (HTTPS) to protect the Docker daemon socket.  
+This mode also verifies the user, meaning that only the users with the correct certificates can access the socket.  
+The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
+See the **Larn Mode** session for more details. In short:
+```bash
+# Generate a pair of keys for the Certificate Authority
+openssl genrsa -aes256 -out ca-key.pem 4096
+
+# Create a Certificate Authority. When asked for a "Common Name", you should provide the host name of the remote machine
+openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+
+# Generate another pair of keys for the server's certificate
+openssl genrsa -out server-key.pem 4096
+
+# Create a certificate request. $HOST should be the same "Common Name" provided before
+openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
+
+# Additional connection settings. You may want to add the ip of the host. $HOST should be the same "Common Name" provided before, while $HOST_IP is its public ip address
+echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1,IP:$HOST_IP >> extfile.cnf
 echo extendedKeyUsage = serverAuth >> extfile.cnf
 
 # Generate the signed certificate
@@ -77,7 +124,7 @@ Where
 - $PORT is the port you want to expose. The default one is port 2375
 You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with
-```
+```bash
 sudo systemctl stop docker.service
 ```
 
