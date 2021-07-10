@@ -66,7 +66,7 @@ const Toast = ({
   contentClassName,
   clickable,
   onClick,
- }: ToastProps): ReactElement => {
+}: ToastProps): ReactElement => {
   const messageDOM: any = useRef();
 
   useLayoutEffect(() => {
@@ -77,7 +77,7 @@ const Toast = ({
         messageDOM.current.style.height = `${height}px`;
       }, 0);
     }
-  }, [messageDOM.current]);
+  });
 
   const contentClassNames = [
     'toast-content',

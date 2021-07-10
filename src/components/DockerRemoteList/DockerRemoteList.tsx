@@ -34,7 +34,7 @@ function DockerRemoteList() {
             <Card bg="dark" key={key} border="primary" className="mb-3">
                 <Card.Header><h5>{`${value.host}:${value.port}`}</h5></Card.Header>
                 <Card.Body>
-                    <Card.Text>
+                    <Card.Text as={"div"}>
                         <Row>
                             <Col xs={9}>
                                 Host: <b>{value.host}</b><br></br>
