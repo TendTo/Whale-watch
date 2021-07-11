@@ -176,7 +176,7 @@ The complete documentation of the Docker API can be found [here](https://docs.do
 Additionally, to use HTTPS, you may want to read [this](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket).
 
 ## Made with 🔧
-[react](https://reactjs.org/)
-[Create React App](https://create-react-app.dev/)
-[Darkly bootstrap theme](https://bootswatch.com/darkly/)
-[dockerode typing](https://github.com/apocas/dockerode)
+- [react](https://reactjs.org/)
+- [Create React App](https://create-react-app.dev/)
+- [Darkly bootstrap theme](https://bootswatch.com/darkly/)
+- [dockerode typing](https://github.com/apocas/dockerode)
