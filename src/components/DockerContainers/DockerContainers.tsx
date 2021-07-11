@@ -186,7 +186,7 @@ function DockerContainers({ data, eventKey }: Props) {
             </Modal >
             <Modal dialogClassName="modal-lg" show={containerLogs !== undefined} onHide={() => setContainerLogs(undefined)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{containerLogs?.name.slice(1)} details</Modal.Title>
+                    <Modal.Title>{containerLogs?.name.slice(1)} logs</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <pre>

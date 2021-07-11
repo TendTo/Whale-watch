@@ -2,7 +2,11 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://tendto.github.io/Whale-watch/)
 ![CI/CD](https://github.com/TendTo/Whale-watch/workflows/Production/badge.svg)
 
-Simple browser-based Docker GUI. It can be used to connect to remote Docker instances.
+**Simple browser-based Docker GUI. It can be used to connect to remote Docker instances.**
+
+![Home page](/docs/img/Main.JPG)
+![Images section](/docs/img/Images.JPG)
+![Containers section](/docs/img/Containers.JPG)
 
 ## Setup the Docker daemon 🐳
 
