@@ -17,7 +17,7 @@ import strings from './DockerRemoteForm.json';
 
 function DockerRemoteForm() {
     const defaultData = {
-        socket: "/var/run/docker.sock", port: 2375, host: "192.168.1.18",
+        socket: "/var/run/docker.sock", port: 2375, host: strings.placeholderHost,
         ca: "",
         cert: "",
         key: ""
@@ -73,10 +73,11 @@ function DockerRemoteForm() {
     return (
         <>
             <Button variant="success" onClick={handleOpen}>
+                <i className="fa fa-plus"></i>&nbsp;&nbsp;
                 Add Docker remote
             </Button>
 
-            <Modal dialogClassName="modal-lg" backdrop="static" keyboard={false} show={show} onHide={handleClose}>
+            <Modal dialogClassName="modal-lg" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add a new Docker remote</Modal.Title>
                 </Modal.Header>
@@ -106,13 +107,17 @@ function DockerRemoteForm() {
                                 <Row>
                                     <Col xs="6">
                                         <Form.Group controlId="dockerRemoteForm.host">
-                                            <Form.Label className="DockerRemoteForm-required-label">Remote hostname or IP address</Form.Label>
+                                            <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote hostname or IP address
+                                                <span className="tooltip-text">{strings.hostInfoTooltip}</span>
+                                            </Form.Label>
                                             <Form.Control {...register("host")} type="text" placeholder={strings.placeholderHost} required={!local} />
                                         </Form.Group>
                                     </Col>
                                     <Col xs="3">
                                         <Form.Group controlId="dockerRemoteForm.port">
-                                            <Form.Label className="DockerRemoteForm-required-label">Remote port</Form.Label>
+                                            <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote port
+                                                <span className="tooltip-text">{strings.portInfoTooltip}</span>
+                                            </Form.Label>
                                             <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={strings.placeholderPort} required={!local} />
                                         </Form.Group>
                                     </Col>
@@ -120,15 +125,21 @@ function DockerRemoteForm() {
                                 {
                                     useTls && (<>
                                         <Form.Group controlId="dockerRemoteForm.ca">
-                                            <Form.Label>Certificate Authority (ca.pem)</Form.Label>
+                                            <Form.Label className="info-tooltip">Certificate Authority (ca.pem)
+                                                <span className="tooltip-text">{strings.caInfoTooltip}</span>
+                                            </Form.Label>
                                             <Form.Control {...register("ca")} as="textarea" rows={4} placeholder={strings.placeholderCa} />
                                         </Form.Group>
                                         <Form.Group controlId="dockerRemoteForm.cert">
-                                            <Form.Label>Certificate (cert.pem)</Form.Label>
+                                            <Form.Label className="info-tooltip">Certificate (cert.pem)
+                                                <span className="tooltip-text">{strings.certInfoTooltip}</span>
+                                            </Form.Label>
                                             <Form.Control {...register("cert")} as="textarea" rows={4} placeholder={strings.placeholderCert} />
                                         </Form.Group>
                                         <Form.Group controlId="dockerRemoteForm.key">
-                                            <Form.Label>Key (key.pem)</Form.Label>
+                                            <Form.Label className="info-tooltip">Key (key.pem)
+                                                <span className="tooltip-text">{strings.keyInfoTooltip}</span>
+                                            </Form.Label>
                                             <Form.Control {...register("key")} as="textarea" rows={4} placeholder={strings.placeholderKey} />
                                         </Form.Group>
                                     </>)

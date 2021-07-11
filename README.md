@@ -1,4 +1,4 @@
-# Whale watch
+# ![favicon](/public/favicon.ico) Whale watch
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://tendto.github.io/Whale-watch/)
 ![CI/CD](https://github.com/TendTo/Whale-watch/workflows/Production/badge.svg)
 

@@ -5,7 +5,10 @@
     "placeholderHost": "hostname.com",
     "placeholderPort": "2375",
     "placeholderSocket": "/var/run/docker.sock",
-    "infoTooltip": "Connect to a new remote Docker daemon.\nIf the HTTP connection is selected, only host and post fields will be considered.\nThe remaining fileds are used for a mutual HTTPS connection.\nFor more informations on the other fields, see the README.md",
-    "hostInfoTooltip": "Host name of the remote machine running the Docker daemon.\nCan be an IP address.",
-    "portInfoTooltip": "Port the Docker daemon will listen to. Defaults to 2375."
+    "infoTooltip": "Connect to a new remote Docker daemon.\nIf the HTTPS connection is selected, you have the option to specify ca, cert and key. This is only needed if the Docker daemon expects mutual authentication.\nFor more pieces of information on the other fields, see the README.md",
+    "hostInfoTooltip": "Hostname or IP address of the machine running the Docker Daemon.",
+    "portInfoTooltip": "Port the Docker daemon is listening to. Default is 2375.",
+    "caInfoTooltip": "Certificate authority used to sign the certificate.\nOnly needed if the certificate was self signed and requires mutual authentication.",
+    "certInfoTooltip": "Certificate that identifies the client.\nOnly needed if mutual authentication is required.",
+    "keyInfoTooltip": "Key used to sign the client's certificate.\nOnly needed if mutual authentication is required."
 }
