@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/Whale-watch/static/css/main.da4f6951.chunk.css",
-    "main.js": "/Whale-watch/static/js/main.6184620a.chunk.js",
-    "main.js.map": "/Whale-watch/static/js/main.6184620a.chunk.js.map",
+    "main.js": "/Whale-watch/static/js/main.95da6eec.chunk.js",
+    "main.js.map": "/Whale-watch/static/js/main.95da6eec.chunk.js.map",
     "runtime-main.js": "/Whale-watch/static/js/runtime-main.2b71b4e8.js",
     "runtime-main.js.map": "/Whale-watch/static/js/runtime-main.2b71b4e8.js.map",
     "static/css/2.081f420c.chunk.css": "/Whale-watch/static/css/2.081f420c.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.081f420c.chunk.css",
     "static/js/2.99462500.chunk.js",
     "static/css/main.da4f6951.chunk.css",
-    "static/js/main.6184620a.chunk.js"
+    "static/js/main.95da6eec.chunk.js"
   ]
 }
