@@ -2,7 +2,7 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://tendto.github.io/Whale-watch/)
 ![CI/CD](https://github.com/TendTo/Whale-watch/workflows/Production/badge.svg)
 
-Simple browser based Docker GUI. It can be used to connect to remote Docker instances.
+Simple browser-based Docker GUI. It can be used to connect to remote Docker instances.
 
 ## Setup the Docker daemon 🐳
 
@@ -17,7 +17,7 @@ The simplest way to make the Docker daemon listen for remote connections is with
 dockerd --api-cors-header=$BROWSER_ADDRESS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the github page address or the address of the machine you are using this program on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using this program on
 - $PORT is the port you want to expose. The default one is port 2375
 You may need to stop the docker.service if it is already running with
 ```bash
@@ -27,13 +27,15 @@ sudo systemctl stop docker.service
 ### HTTPS only server - Medium
 To make the connection more secure, you could use TLS (HTTPS) to protect the traffic to the Docker daemon socket.  
 Only the server is verified, but not the client.  
-The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
+You could use an actual certificate, but you can also sign one yourself with the following procedure.  
+Be mindful that if you follow the latter path, your browser may complain about _untrusted certificates_ and you may need to disable the feature temporarily.  
+The term _host_ refers to the machine running the Docker daemon, while _client_ refers to the machine running _Whale watch_.  
 See the **Learn more** session for more details. In short:
 ```bash
 # Generate a pair of keys for the Certificate Authority
 openssl genrsa -aes256 -out ca-key.pem 4096
 
-# Create a Certificate Authority. When asked for a "Common Name", you should provide the host name of the remote machine
+# Create a Certificate Authority. When asked for a "Common Name", you should provide the hostname of the remote machine
 openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
 
 # Generate another pair of keys for the server's certificate
@@ -62,7 +64,7 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the github page address or the address of the machine you are using _Whale watch_ on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on
 - $PORT is the port you want to expose. The default one is port 2375
 You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with
@@ -73,13 +75,15 @@ sudo systemctl stop docker.service
 ### HTTPS complete - Complex - TODO
 To make the connection even more secure, you could use TLS (HTTPS) to protect the Docker daemon socket.  
 This mode also verifies the user, meaning that only the users with the correct certificates can access the socket.  
-The term _host_ refers to the machine running the Docker deamon, while _client_ refers to the machine running _Whale watch_.  
+You could use an actual certificate, but you can also sign one yourself with the following procedure.  
+Be mindful that if you follow the latter path, your browser may complain about _untrusted certificates_ and you may need to disable the feature temporarily.  
+The term _host_ refers to the machine running the Docker daemon, while _client_ refers to the machine running _Whale watch_.  
 See the **Learn more** session for more details. In short:
 ```bash
 # Generate a pair of keys for the Certificate Authority
 openssl genrsa -aes256 -out ca-key.pem 4096
 
-# Create a Certificate Authority. When asked for a "Common Name", you should provide the host name of the remote machine
+# Create a Certificate Authority. When asked for a "Common Name", you should provide the hostname of the remote machine
 openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
 
 # Generate another pair of keys for the server's certificate
@@ -120,17 +124,13 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the github page address or the address of the machine you are using _Whale watch_ on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on
 - $PORT is the port you want to expose. The default one is port 2375
 You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with
 ```bash
 sudo systemctl stop docker.service
 ```
-
-### Learn more
-The complete documentation can be found [here](https://docs.docker.com/engine/install/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections).  
-Additionally, to make the connection secure, you may want to read [this](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket).
 
 ## Starting in local 💻
 
@@ -165,10 +165,18 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point, you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However, we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-### Learn more
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).  
+## Learn more 📖
+You can learn more about Create React App in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).  
 To learn React, check out the [React documentation](https://reactjs.org/).
+The complete documentation of the Docker API can be found [here](https://docs.docker.com/engine/install/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections).  
+Additionally, to use HTTPS, you may want to read [this](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket).
+
+## Made with 🔧
+[react](https://reactjs.org/)
+[Create React App](https://create-react-app.dev/)
+[Darkly bootstrap theme](https://bootswatch.com/darkly/)
+[dockerode typing](https://github.com/apocas/dockerode)
