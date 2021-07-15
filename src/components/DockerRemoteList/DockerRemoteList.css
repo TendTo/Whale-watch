@@ -6,6 +6,12 @@
     grid-gap: 24px;
 }
 
+@media screen and (max-width: 430px) {
+    .DockerRemoteList-CardDeck {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
 .DockerRemoteList-CardDeck .card {
     max-width: 600px;
 }

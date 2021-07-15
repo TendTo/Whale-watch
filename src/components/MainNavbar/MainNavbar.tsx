@@ -4,6 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from 'react-router-dom';
 import DockerRemoteForm from "../DockerRemoteForm/DockerRemoteForm";
+import './MainNav.css';
 
 function MainNavbar() {
     return (
