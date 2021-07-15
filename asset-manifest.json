@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/Whale-watch/static/css/main.027e38c5.chunk.css",
-    "main.js": "/Whale-watch/static/js/main.c6accfde.chunk.js",
-    "main.js.map": "/Whale-watch/static/js/main.c6accfde.chunk.js.map",
-    "runtime-main.js": "/Whale-watch/static/js/runtime-main.2b71b4e8.js",
-    "runtime-main.js.map": "/Whale-watch/static/js/runtime-main.2b71b4e8.js.map",
+    "main.css": "/Whale-watch/static/css/main.589c7e12.chunk.css",
+    "main.js": "/Whale-watch/static/js/main.ec67fb90.chunk.js",
+    "main.js.map": "/Whale-watch/static/js/main.ec67fb90.chunk.js.map",
+    "runtime-main.js": "/Whale-watch/static/js/runtime-main.9a20c3cd.js",
+    "runtime-main.js.map": "/Whale-watch/static/js/runtime-main.9a20c3cd.js.map",
     "static/css/2.081f420c.chunk.css": "/Whale-watch/static/css/2.081f420c.chunk.css",
-    "static/js/2.3c118ec8.chunk.js": "/Whale-watch/static/js/2.3c118ec8.chunk.js",
-    "static/js/2.3c118ec8.chunk.js.map": "/Whale-watch/static/js/2.3c118ec8.chunk.js.map",
-    "static/js/3.7c36d3ab.chunk.js": "/Whale-watch/static/js/3.7c36d3ab.chunk.js",
-    "static/js/3.7c36d3ab.chunk.js.map": "/Whale-watch/static/js/3.7c36d3ab.chunk.js.map",
+    "static/js/2.bbb2178c.chunk.js": "/Whale-watch/static/js/2.bbb2178c.chunk.js",
+    "static/js/2.bbb2178c.chunk.js.map": "/Whale-watch/static/js/2.bbb2178c.chunk.js.map",
+    "static/js/3.3fc8801f.chunk.js": "/Whale-watch/static/js/3.3fc8801f.chunk.js",
+    "static/js/3.3fc8801f.chunk.js.map": "/Whale-watch/static/js/3.3fc8801f.chunk.js.map",
     "index.html": "/Whale-watch/index.html",
     "static/css/2.081f420c.chunk.css.map": "/Whale-watch/static/css/2.081f420c.chunk.css.map",
-    "static/css/main.027e38c5.chunk.css.map": "/Whale-watch/static/css/main.027e38c5.chunk.css.map",
-    "static/js/2.3c118ec8.chunk.js.LICENSE.txt": "/Whale-watch/static/js/2.3c118ec8.chunk.js.LICENSE.txt"
+    "static/css/main.589c7e12.chunk.css.map": "/Whale-watch/static/css/main.589c7e12.chunk.css.map",
+    "static/js/2.bbb2178c.chunk.js.LICENSE.txt": "/Whale-watch/static/js/2.bbb2178c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.2b71b4e8.js",
+    "static/js/runtime-main.9a20c3cd.js",
     "static/css/2.081f420c.chunk.css",
-    "static/js/2.3c118ec8.chunk.js",
-    "static/css/main.027e38c5.chunk.css",
-    "static/js/main.c6accfde.chunk.js"
+    "static/js/2.bbb2178c.chunk.js",
+    "static/css/main.589c7e12.chunk.css",
+    "static/js/main.ec67fb90.chunk.js"
   ]
 }
