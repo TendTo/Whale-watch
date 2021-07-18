@@ -142,8 +142,9 @@ class DockerApi {
             throw Error("404 - imageCreate has failed");
         }
         let fromImage = matches[1] || "";
+        let tag = matches[2] || "latest";
         fromImage = fromImage.endsWith(":") ? fromImage.slice(0, -1) : fromImage;
-        const tag = matches[2] || "latest";
+        tag = matches[2].startsWith(":") ? tag.slice(1) : tag;
         await this.apiRequest("images/create", "POST", undefined, { fromImage: fromImage, tag: tag });
     }
 
