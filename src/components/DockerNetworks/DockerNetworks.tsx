@@ -31,6 +31,7 @@ function DockerNetworks({ data, eventKey }: Props) {
     const fetchNetworkLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
+            console.log("FEST");
             dockerApi.networkLs()
                 .then(setNetworkLs)
                 .catch(requestErrorToast);
@@ -49,13 +50,13 @@ function DockerNetworks({ data, eventKey }: Props) {
     return (
         <>
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={eventKey} onClick={() => fetchNetworkLs()}>
+                <Accordion.Toggle id="acc-networks" as={Card.Header} eventKey={eventKey} onClick={() => fetchNetworkLs()}>
                     <h5>Networks</h5>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
                         {loading && <Spinner animation="border" size="sm" />}
-                        {!loading && NetworkLs === undefined && <p>No images found</p>}
+                        {!loading && NetworkLs === undefined && <p>No networks found</p>}
                         {!loading && NetworkLs && (
                             <table className="table table-hover">
                                 <thead>

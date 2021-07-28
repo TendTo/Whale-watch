@@ -1,6 +1,7 @@
 # ![favicon](/public/favicon.ico) Whale watch
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://tendto.github.io/Whale-watch/)
 ![CI/CD](https://github.com/TendTo/Whale-watch/workflows/Production/badge.svg)
+[![codecov](https://codecov.io/gh/TendTo/Whale-watch/branch/master/graph/badge.svg?token=mHQ10TaJii)](https://codecov.io/gh/TendTo/Whale-watch)
 
 **Simple browser-based Docker GUI. It can be used to connect to remote Docker instances.**
 

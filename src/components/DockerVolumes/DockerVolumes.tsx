@@ -53,7 +53,7 @@ function DockerVolumes({ data, eventKey }: Props) {
                 <Accordion.Collapse eventKey={eventKey}>
                     <Card.Body>
                         {loading && <Spinner animation="border" size="sm" />}
-                        {!loading && volumeLs === undefined && <p>No images found</p>}
+                        {!loading && volumeLs === undefined && <p>No volumes found</p>}
                         {!loading && volumeLs && (
                             <table className="table table-hover">
                                 <thead>
