@@ -1,49 +1,19 @@
 import React, { useContext, useState } from "react";
 import { AccordionContext } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
-import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
 import { ContainerInfo, ContainerInspectInfo } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
-import toast from "../Toast/Toast";
+import { requestErrorToast } from "../Toast/Toast";
+import DockerContainer from "./DockerContainer";
 import './DockerContainers.css';
 
 interface Props {
     eventKey: string
     data: DockerRemoteData
-}
-
-function onError(e: Error) {
-    console.error(e);
-    let errorMessage = "An error has occurred.";
-    switch (e.message.slice(0, 3)) {
-        case "403":
-            errorMessage = "Forbidden operation."
-            break;
-        case "404":
-            errorMessage = "Resource not found."
-            break;
-        case "409":
-            errorMessage = "A conflict has emerged."
-            break;
-    }
-    toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
-}
-
-function timeConverter(unixTime: number) {
-    const a = new Date(unixTime * 1000);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const year = a.getFullYear();
-    const month = months[a.getMonth()];
-    const date = a.getDate();
-    const hour = a.getHours();
-    const min = a.getMinutes();
-    const sec = a.getSeconds();
-    const time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
-    return time;
 }
 
 function detailsConverter(containerDetails: ContainerInspectInfo | undefined) {
@@ -69,80 +39,23 @@ function DockerContainers({ data, eventKey }: Props) {
     const [containerLs, setContainerLs] = useState<ContainerInfo[]>();
     const [containerDetails, setContainerDetails] = useState<ContainerInspectInfo>();
     const [containerLogs, setContainerLogs] = useState<{ name: string, logs: string }>();
-    const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
     const fetchContainerLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.containerLs().then(setContainerLs).catch(onError);
+            dockerApi.containerLs().then(setContainerLs).catch(requestErrorToast);
         }
     }
 
-    const containersElements = containerLs?.map((container, idx) => {
-        const onRun = () => {
-            dockerApi.containerRun(container)
-                .then(() => fetchContainerLs(true))
-                .then(() => toast("A new container has started running"))
-                .catch(onError);
-        }
-        const onInspect = () => {
-            dockerApi.containerInspect(container)
-                .then(setContainerDetails)
-                .catch(onError);
-        }
-        const onLogs = () => {
-            dockerApi.containerLogs(container)
-                .then((logs) => setContainerLogs({ name: container.Names ? container.Names[0] : container.Id, logs: logs }))
-                .catch(onError);
-        }
-        const onRestart = () => {
-            dockerApi.containerRestart(container)
-                .then(() => fetchContainerLs(true))
-                .then(() => toast("The container has been restarted"))
-                .catch(onError);
-        }
-        const onStop = () => {
-            dockerApi.containerStop(container)
-                .then(() => fetchContainerLs(true))
-                .then(() => toast("The container has been stopped"))
-                .catch(onError);
-        }
-        const onDelete = () => {
-            dockerApi.containerRm(container)
-                .then(() => fetchContainerLs(true))
-                .then(() => toast("The container has been deleted"))
-                .catch(onError);
-        }
-
-        return (
-            <tr key={idx}>
-                <td>{container.Names.map(e => e.slice(1))}</td>
-                <td>{container.Image}</td>
-                <td>{timeConverter(container.Created)}</td>
-                <td>{container.Status}</td>
-                <td className="DockerContainers-actions" >
-                    <Button variant="success lg" onClick={onRun}>
-                        <i className="fa fa-play"></i>
-                    </Button>
-                    <Button variant="info lg" onClick={onInspect}>
-                        <i className="fa fa-eye"></i>
-                    </Button>
-                    <Button variant="light lg" onClick={onLogs}>
-                        <i className="fa fa-file-text-o"></i>
-                    </Button>
-                    <Button variant="primary lg" onClick={onRestart}>
-                        <i className="fa fa-refresh"></i>
-                    </Button>
-                    <Button variant="warning lg" onClick={onStop}>
-                        <i className="fa fa-stop"></i>
-                    </Button>
-                    <Button variant="danger lg" onClick={onDelete}>
-                        <i className="fa fa-trash"></i>
-                    </Button>
-                </td>
-            </tr>
-        );
-    });
+    const containersElements = containerLs?.map((container, idx) =>
+        <DockerContainer key={idx}
+            container={container}
+            data={data}
+            fetchContainerLs={fetchContainerLs}
+            setContainerDetails={setContainerDetails}
+            setContainerLogs={setContainerLogs}
+        ></DockerContainer>
+    );
 
     return (
         <>

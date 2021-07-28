@@ -9,53 +9,13 @@ import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
 import { ImageInfo, ImageInspectInfo } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
-import toast from "../Toast/Toast";
+import toast, { requestErrorToast } from "../Toast/Toast";
+import DockerImage from "./DockerImage";
 import './DockerImages.css';
 
 interface Props {
     eventKey: string
     data: DockerRemoteData
-}
-
-function onError(e: Error) {
-    console.error(e);
-    let errorMessage = "An error has occurred.";
-    switch (e.message.slice(0, 3)) {
-        case "403":
-            errorMessage = "Forbidden operation."
-            break;
-        case "404":
-            errorMessage = "Resource not found."
-            break;
-        case "409":
-            errorMessage = "A conflict has emerged."
-            break;
-    }
-    toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
-}
-
-function sizeConverter(size: number) {
-    const dimensions = ['B', 'KB', 'MB', 'GB', 'TB'];
-    for (let dimension of dimensions) {
-        if (size / 1000 < 1)
-            return `${size.toFixed(2)} ${dimension}`;
-        else
-            size /= 1000;
-    }
-    return `${size.toFixed(2)} TB`;
-}
-
-function timeConverter(unixTime: number) {
-    const a = new Date(unixTime * 1000);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const year = a.getFullYear();
-    const month = months[a.getMonth()];
-    const date = a.getDate();
-    const hour = a.getHours();
-    const min = a.getMinutes();
-    const sec = a.getSeconds();
-    const time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
-    return time;
 }
 
 function detailsConverter(imageDetails: ImageInspectInfo | undefined) {
@@ -75,60 +35,30 @@ function DockerImages({ data, eventKey }: Props) {
     const fetchImageLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.imageLs().then(setImageLs).catch(onError);
+            dockerApi.imageLs().then(setImageLs).catch(requestErrorToast);
         }
     }
     const onPull = () => {
         const input = (document.getElementById('dockerImages.tag') as HTMLInputElement);
         const inputValue = input?.value;
-        
+
         if (inputValue === undefined || inputValue === null || inputValue.length === 0 || inputValue.startsWith(":"))
             return toast("You must specify an image name to pull", { contentClassName: "text-danger" })
-        
+
         input.value = "";
         dockerApi.imageCreate(inputValue)
             .then(() => toast("A new images is being pulled.\nIt may take a while before it shows here"))
-            .catch(onError);
+            .catch(requestErrorToast);
     }
 
-    const imageElements = imageLs?.map((image, idx) => {
-        const onRun = () => {
-            dockerApi.containerCreate(image)
-                .then(() => toast("A new container has been created"))
-                .catch(onError);
-        }
-        const onInspect = () => {
-            dockerApi.imageInspect(image)
-                .then((details) => setImageDetails(details))
-                .catch(onError);
-        }
-        const onDelete = () => {
-            dockerApi.imageRm(image)
-                .then(() => fetchImageLs(true))
-                .then(() => toast("The image has been deleted"))
-                .catch(onError);
-        }
-
-        return (
-            <tr key={idx}>
-                <td>{image.RepoTags}</td>
-                <td className="DockerImages-image-id">{image.Id}</td>
-                <td>{timeConverter(image.Created)}</td>
-                <td>{sizeConverter(image.Size)}</td>
-                <td className="DockerImages-actions" >
-                    <Button variant="success lg" onClick={onRun}>
-                        <i className="fa fa-play"></i>
-                    </Button>
-                    <Button variant="info lg" onClick={onInspect}>
-                        <i className="fa fa-eye"></i>
-                    </Button>
-                    <Button variant="danger lg" onClick={onDelete}>
-                        <i className="fa fa-trash"></i>
-                    </Button>
-                </td>
-            </tr>
-        );
-    });
+    const imageElements = imageLs?.map((image, idx) =>
+        <DockerImage key={idx}
+            data={data}
+            image={image}
+            fetchImageLs={fetchImageLs}
+            setImageDetails={setImageDetails}
+        ></DockerImage>
+    );
 
     return (
         <>

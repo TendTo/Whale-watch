@@ -1,36 +1,19 @@
 import React, { useContext, useState } from "react";
 import { AccordionContext } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
-import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import DockerApi from "../../api/DockerApi";
 import { VolumeInspectInfo, VolumeList } from '../../types/DockerApiTypes';
 import { DockerRemoteData } from '../../types/DockerTypes';
-import toast from "../Toast/Toast";
+import { requestErrorToast } from "../Toast/Toast";
+import DockerVolume from "./DockerVolume";
 import './DockerVolumes.css';
 
 interface Props {
     eventKey: string
     data: DockerRemoteData
-}
-
-function onError(e: Error) {
-    console.error(e);
-    let errorMessage = "An error has occurred.";
-    switch (e.message.slice(0, 3)) {
-        case "403":
-            errorMessage = "Forbidden operation."
-            break;
-        case "404":
-            errorMessage = "Resource not found."
-            break;
-        case "409":
-            errorMessage = "A conflict has emerged."
-            break;
-    }
-    toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: "text-danger" });
 }
 
 function detailsConverter(imageDetails: VolumeInspectInfo | undefined) {
@@ -44,45 +27,22 @@ function DockerVolumes({ data, eventKey }: Props) {
     const [loading, setLoading] = useState(false);
     const [volumeLs, setVolumeLs] = useState<VolumeList>();
     const [volumeDetails, setVolumeDetails] = useState<VolumeInspectInfo>();
-    const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-
 
     const fetchVolumeLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
             const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-            dockerApi.volumeLs().then(setVolumeLs).catch(onError);
+            dockerApi.volumeLs().then(setVolumeLs).catch(requestErrorToast);
         }
     }
 
-    const imageElements = volumeLs?.Volumes.map((volume, idx) => {
-        const onInspect = () => {
-            dockerApi.volumeInpect(volume)
-                .then((details) => setVolumeDetails(details))
-                .catch(onError);
-        }
-        const onDelete = () => {
-            dockerApi.volumeRm(volume)
-                .then(() => fetchVolumeLs(true))
-                .then(() => toast("The volume has been deleted"))
-                .catch(onError);
-        }
-
-        return (
-            <tr key={idx}>
-                <td className="DockerVolumes-name">{volume.Name}</td>
-                <td>{volume.Driver}</td>
-                <td className="DockerVolumes-name">{volume.Mountpoint}</td>
-                <td className="DockerVolumes-actions" >
-                    <Button variant="info lg" onClick={onInspect}>
-                        <i className="fa fa-eye"></i>
-                    </Button>
-                    <Button variant="danger lg" onClick={onDelete}>
-                        <i className="fa fa-trash"></i>
-                    </Button>
-                </td>
-            </tr>
-        );
-    });
+    const imageElements = volumeLs?.Volumes.map((volume, idx) =>
+        <DockerVolume key={idx}
+            volume={volume}
+            data={data}
+            fetchVolumeLs={fetchVolumeLs}
+            setVolumeDetails={setVolumeDetails}
+        ></DockerVolume>
+    );
 
     return (
         <>

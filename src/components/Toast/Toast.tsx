@@ -140,4 +140,26 @@ function toast(message: string, timeOrOptions?: number | ToastOptions): void {
   }, time);
 }
 
+export function requestErrorToast(e: Error) {
+  console.error(e);
+  let contentClassName = "text-danger";
+  let errorMessage = "An error has occurred.";
+  switch (e.message.slice(0, 3)) {
+    case "304":
+      errorMessage = "Nothing has changed."
+      contentClassName = "text-warning"
+      break;
+    case "403":
+      errorMessage = "Forbidden operation."
+      break;
+    case "404":
+      errorMessage = "Resource not found."
+      break;
+    case "409":
+      errorMessage = "A conflict has emerged."
+      break;
+  }
+  toast(`${errorMessage}\nCheck the logs to know more`, { contentClassName: contentClassName });
+}
+
 export default toast;

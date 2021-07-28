@@ -165,7 +165,7 @@ function DockerRemoteForm() {
                         <p className="text-success">Connection successfully enstablished</p>
                     )}
 
-                    <Button variant="warning" onClick={handleSubmit(onTest)}>
+                    <Button variant="warning" onClick={handleSubmit(onTest)} disabled={loading}>
                         {loading && <Spinner animation="border" size="sm" />}
                         {!loading && "Test connection"}
                     </Button>
