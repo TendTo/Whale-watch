@@ -33,6 +33,11 @@ To make the connection more secure, you could use TLS (HTTPS) to protect the tra
 Only the server is verified, but not the client.  
 You could use an actual certificate, but you can also sign one yourself with the following procedure.  
 Be mindful that if you follow the latter path, your browser may complain about _untrusted certificates_ and you may need to disable the feature temporarily.  
+Alternatively, you coul add the ca.pem file in a ca.crt file and add it to your browser's _certificate authorities_ list.
+```bash
+# Convert the ca.pem file in a ca.crt file
+openssl x509 -outform der -in ca.pem -out ca.crt
+```
 The term _host_ refers to the machine running the Docker daemon, while _client_ refers to the machine running _Whale watch_.  
 See the **Learn more** session for more details. In short:
 ```bash
@@ -68,19 +73,30 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ for all addresses
 - $PORT is the port you want to expose. The default one is port 2375
-You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with
 ```bash
 sudo systemctl stop docker.service
 ```
 
-### HTTPS complete - Complex - TODO
+### HTTPS complete - Complex
 To make the connection even more secure, you could use TLS (HTTPS) to protect the Docker daemon socket.  
 This mode also verifies the user, meaning that only the users with the correct certificates can access the socket.  
 You could use an actual certificate, but you can also sign one yourself with the following procedure.  
-Be mindful that if you follow the latter path, your browser may complain about _untrusted certificates_ and you may need to disable the feature temporarily.  
+There is some additional setup that has to be done on the browser:
+- convert the ca.pem certificate authority to a ca.crt file and add it as a trusted _certificate authority_ on your browser
+  - ```bash
+    # Convert the ca.pem file in a ca.crt file
+    openssl x509 -outform der -in ca.pem -out ca.crt
+    ```
+- convert the cert.pem client certificate to a cert.p12 file that includes the key used to sign it and add it to your list of _client certificates_ on your browser
+  - ```bash
+    # Convert the cert.pem file to a cert.p12 file
+    # $KEY_PASS is the password associated with the key
+    openssl pkcs12 -export -out cert.p12 -in cert.pem -inkey key.pem -passin pass:$KEY_PASS -passout pass:$KEY_PASS
+    ```
+
 The term _host_ refers to the machine running the Docker daemon, while _client_ refers to the machine running _Whale watch_.  
 See the **Learn more** session for more details. In short:
 ```bash
@@ -96,7 +112,8 @@ openssl genrsa -out server-key.pem 4096
 # Create a certificate request. $HOST should be the same "Common Name" provided before
 openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
 
-# Additional connection settings. You may want to add the ip of the host. $HOST should be the same "Common Name" provided before, while $HOST_IP is its public ip address
+# Additional connection settings. You may want to add the ip of the host.
+# $HOST should be the same "Common Name" provided before, while $HOST_IP is its public ip address
 echo subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1,IP:$HOST_IP >> extfile.cnf
 echo extendedKeyUsage = serverAuth >> extfile.cnf
 
@@ -116,6 +133,10 @@ echo extendedKeyUsage = clientAuth > extfile-client.cnf
 # Finally, generate the client's certificate
 openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
   -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+
+# If you plan to use the client certificate for authentication, you have to use the p12 certificate, that includes the private key.
+# $KEY_PASS is the passphrase used in the key creation process
+openssl pkcs12 -export -out cert.p12 -in cert.pem -inkey key.pem -passin pass:$KEY_PASS -passout pass:$KEY_PASS
 ```
 To make the Docker daemon listen for remote connections with the certificates use the following command:
 ```bash
@@ -128,7 +149,7 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ for all addresses
 - $PORT is the port you want to expose. The default one is port 2375
 You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with

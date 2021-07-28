@@ -1,5 +1,6 @@
 HOST="localhost"
 HOST_IP="192.168.1.1"
+KEY_PASS="root"
 
 # Generate a pair of keys for the Certificate Authority
 openssl genrsa -aes256 -out ca-key.pem 4096
@@ -33,3 +34,6 @@ echo extendedKeyUsage = clientAuth > extfile-client.cnf
 # Finally, generate the client's certificate
 openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
   -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+
+# If you plan to use the client certificate for authentication, you have to use the p12 certificate, that includes the private key
+openssl pkcs12 -export -out cert.p12 -in cert.pem -inkey key.pem -passin pass:$KEY_PASS -passout pass:$KEY_PASS
