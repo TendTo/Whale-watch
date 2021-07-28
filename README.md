@@ -22,8 +22,9 @@ The simplest way to make the Docker daemon listen for remote connections is with
 dockerd --api-cors-header=$BROWSER_ADDRESS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using this program on
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using this program on, or _*_ to match all addresses
 - $PORT is the port you want to expose. The default one is port 2375
+
 You may need to stop the docker.service if it is already running with
 ```bash
 sudo systemctl stop docker.service
@@ -74,8 +75,9 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ for all addresses
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ to match all addresses
 - $PORT is the port you want to expose. The default one is port 2375
+
 You may need to stop the docker.service if it is already running with
 ```bash
 sudo systemctl stop docker.service
@@ -150,8 +152,9 @@ dockerd \
     -H=0.0.0.0:$PORT
 ```
 Where 
-- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ for all addresses
+- $BROWSER_ADDRESS is the GitHub page address or the address of the machine you are using _Whale watch_ on, or _*_ to match all addresses
 - $PORT is the port you want to expose. The default one is port 2375
+
 You will need the contents of the _ca.pem_, _cert.pem_ and _key.pem_ files to connect to the host from the client.
 You may need to stop the docker.service if it is already running with
 ```bash
