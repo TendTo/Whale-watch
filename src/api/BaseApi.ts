@@ -3,14 +3,7 @@ export type genericObject = {
 };
 
 class BaseApi {
-    constructor(
-        public protocol: "https" | "http",
-        public host: string,
-        public port: number,
-        public ca?: string,
-        public cert?: string,
-        public key?: string) {
-    }
+    constructor(public protocol: "https" | "http", public host: string, public port: number) { }
 
     get baseUrl(): string {
         return `${this.protocol}://${this.host}${this.port ? ":" + this.port : ""}`

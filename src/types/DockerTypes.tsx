@@ -2,9 +2,6 @@ export interface DockerRemoteData {
     protocol: "https" | "http",
     host: string,
     port: number,
-    ca?: string,
-    cert?: string,
-    key?: string
 }
 
 export interface DockerRemoteContextState {

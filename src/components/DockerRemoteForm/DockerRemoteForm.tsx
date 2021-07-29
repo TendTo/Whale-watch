@@ -16,12 +16,7 @@ import './DockerRemoteForm.css';
 import strings from './DockerRemoteForm.json';
 
 function DockerRemoteForm() {
-    const defaultData = {
-        socket: "/var/run/docker.sock", port: 2375, host: strings.placeholderHost,
-        ca: "",
-        cert: "",
-        key: ""
-    };
+    const defaultData = { port: 2375, host: strings.placeholderHost };
     const infoTooltip = (
         <Tooltip id="infoTooltip">
             {strings.infoTooltip}
@@ -38,7 +33,6 @@ function DockerRemoteForm() {
     const [useTls, setUseTls] = useState(true);
     const { register, handleSubmit, reset } = useForm({ defaultValues: defaultData });
     const dockerRemoteContext = useContext(DockerRemoteContext);
-    const local = false;
 
     const handleOpen = () => setShow(true);
     const handleClose = () => { setSuccess(false); setFail(false); reset(defaultData); setShow(false); };
@@ -102,59 +96,24 @@ function DockerRemoteForm() {
                                 </OverlayTrigger>
                             </Col>
                         </Row>
-                        {!local && (
-                            <>
-                                <Row>
-                                    <Col xs="6">
-                                        <Form.Group controlId="dockerRemoteForm.host">
-                                            <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote hostname or IP address
-                                                <span className="tooltip-text">{strings.hostInfoTooltip}</span>
-                                            </Form.Label>
-                                            <Form.Control {...register("host")} type="text" placeholder={strings.placeholderHost} required={!local} />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col xs="3">
-                                        <Form.Group controlId="dockerRemoteForm.port">
-                                            <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote port
-                                                <span className="tooltip-text">{strings.portInfoTooltip}</span>
-                                            </Form.Label>
-                                            <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={strings.placeholderPort} required={!local} />
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
-                                {
-                                    useTls && (<>
-                                        <Form.Group controlId="dockerRemoteForm.ca">
-                                            <Form.Label className="info-tooltip">Certificate Authority (ca.pem)
-                                                <span className="tooltip-text">{strings.caInfoTooltip}</span>
-                                            </Form.Label>
-                                            <Form.Control {...register("ca")} as="textarea" rows={4} placeholder={strings.placeholderCa} />
-                                        </Form.Group>
-                                        <Form.Group controlId="dockerRemoteForm.cert">
-                                            <Form.Label className="info-tooltip">Certificate (cert.pem)
-                                                <span className="tooltip-text">{strings.certInfoTooltip}</span>
-                                            </Form.Label>
-                                            <Form.Control {...register("cert")} as="textarea" rows={4} placeholder={strings.placeholderCert} />
-                                        </Form.Group>
-                                        <Form.Group controlId="dockerRemoteForm.key">
-                                            <Form.Label className="info-tooltip">Key (key.pem)
-                                                <span className="tooltip-text">{strings.keyInfoTooltip}</span>
-                                            </Form.Label>
-                                            <Form.Control {...register("key")} as="textarea" rows={4} placeholder={strings.placeholderKey} />
-                                        </Form.Group>
-                                    </>)
-                                }
-
-                            </>
-                        )}
-                        {local && (
-                            <>
-                                <Form.Group controlId="dockerRemoteForm.socket">
-                                    <Form.Label>Socket path</Form.Label>
-                                    <Form.Control {...register("socket")} type="text" placeholder={strings.placeholderSocket} required={local} />
+                        <Row>
+                            <Col xs="6">
+                                <Form.Group controlId="dockerRemoteForm.host">
+                                    <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote hostname or IP address
+                                        <span className="tooltip-text">{strings.hostInfoTooltip}</span>
+                                    </Form.Label>
+                                    <Form.Control {...register("host")} type="text" placeholder={strings.placeholderHost} required />
                                 </Form.Group>
-                            </>
-                        )}
+                            </Col>
+                            <Col xs="3">
+                                <Form.Group controlId="dockerRemoteForm.port">
+                                    <Form.Label className="DockerRemoteForm-required-label info-tooltip">Remote port
+                                        <span className="tooltip-text">{strings.portInfoTooltip}</span>
+                                    </Form.Label>
+                                    <Form.Control {...register("port", { valueAsNumber: true })} type="number" placeholder={strings.placeholderPort} required />
+                                </Form.Group>
+                            </Col>
+                        </Row>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

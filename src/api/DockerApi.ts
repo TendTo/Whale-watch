@@ -12,19 +12,16 @@ class DockerApi extends BaseApi {
     private readonly allLogs = { stderr: "true", stdout: "true", tail: 100 };
 
     static fromDockerRemoteData(data: DockerRemoteData, setLoading: (isLoading: boolean) => void) {
-        return new DockerApi(data.protocol, data.host, data.port, data.ca, data.cert, data.key, setLoading);
+        return new DockerApi(data.protocol, data.host, data.port, setLoading);
     }
 
     constructor(
         protocol: "https" | "http",
         host: string,
         port: number,
-        ca?: string,
-        cert?: string,
-        key?: string,
         public setLoading?: (isLoading: boolean) => void
     ) {
-        super(protocol, host, port, ca, cert, key);
+        super(protocol, host, port);
     }
 
     protected override async handleError(error: Response) {

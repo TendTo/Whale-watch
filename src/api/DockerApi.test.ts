@@ -4,7 +4,7 @@ let dockerApi: DockerApi;
 
 beforeEach(() => {
     fetchMock.resetMocks();
-    dockerApi = new DockerApi("http", "localhost", 2375, "ca", "cert", "key", (isLoading: boolean) => { });
+    dockerApi = new DockerApi("http", "localhost", 2375, (isLoading: boolean) => { });
 });
 
 test('DockerApi exists', () => {
@@ -13,7 +13,7 @@ test('DockerApi exists', () => {
 
 test('DockerApi instantiates', () => {
     expect(new DockerApi("http", "localhost", 2375)).toBeTruthy();
-    expect(new DockerApi("http", "localhost", 2375, "ca", "cert", "key", (isLoading: boolean) => { })).toBeTruthy();
+    expect(new DockerApi("http", "localhost", 2375, (isLoading: boolean) => { })).toBeTruthy();
     expect(DockerApi.fromDockerRemoteData({ protocol: "http", host: "localhost", port: 2375 }, (isLoading: boolean) => { })).toBeTruthy();
 });
 
