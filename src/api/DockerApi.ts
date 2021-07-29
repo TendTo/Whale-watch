@@ -27,11 +27,21 @@ class DockerApi extends BaseApi {
         super(protocol, host, port, ca, cert, key);
     }
 
+    protected override async handleError(error: Response) {
+        if (error === undefined || error === null) throw Error("No response");
+        let errMsg: string = error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        try {
+            const errResponse = await error.json() as {message: string};
+            errMsg = errResponse.message || errMsg;
+        } catch (e) { }
+        throw Error(errMsg);
+    }
+
     private async apiRequestWrapper(path: string, method: string = "GET", queryParams?: queryParams, body?: queryParams) {
         if (this.setLoading) this.setLoading(true);
         try {
             const res = await this.apiRequest(path, method, queryParams, body);
-            if (res === undefined || res === null || !res.ok) this.handleError(res);
+            if (res === undefined || res === null || !res.ok) await this.handleError(res);
             if (this.setLoading) this.setLoading(false);
             return res;
         } catch (e) {
