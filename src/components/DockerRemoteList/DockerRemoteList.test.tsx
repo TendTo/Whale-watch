@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { DockerRemoteContext } from '../../context/DockerRemoteContext';
 import { DockerRemoteContextValue, DockerRemoteData } from '../../types/DockerTypes';

@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { Accordion, AccordionContext } from 'react-bootstrap';
 import { act } from 'react-dom/test-utils';
 import DockerNetworks from './DockerNetworks';
