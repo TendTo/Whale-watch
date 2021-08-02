@@ -10,7 +10,7 @@ beforeEach(() => {
 test('DockerNetworks shows default value', () => {
     render(
         <AccordionContext.Provider value="0">
-            <DockerNetworks data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+            <DockerNetworks layout="horizontal" data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
         </AccordionContext.Provider >)
     expect(screen.getByText(/Networks/)).toBeInTheDocument();
     expect(screen.getByText(/No networks found/)).toBeInTheDocument();
@@ -23,7 +23,7 @@ test('DockerNetworks shows networks', async () => {
         render(
             <AccordionContext.Provider value="0">
                 <Accordion >
-                    <DockerNetworks data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+                    <DockerNetworks layout="horizontal" data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
                 </Accordion>
             </AccordionContext.Provider >);
         screen.getByText(/Networks/).click();

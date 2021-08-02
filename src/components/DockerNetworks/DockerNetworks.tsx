@@ -14,6 +14,7 @@ import './DockerNetworks.css';
 interface Props {
     eventKey: string
     data: DockerRemoteData
+    layout: 'horizontal' | 'vertical'
 }
 
 function detailsConverter(imageDetails: NetworkInspectInfo | undefined) {
@@ -22,7 +23,7 @@ function detailsConverter(imageDetails: NetworkInspectInfo | undefined) {
     return JSON.stringify(imageDetails, null, 4);
 }
 
-function DockerNetworks({ data, eventKey }: Props) {
+function DockerNetworks({ data, eventKey, layout }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
     const [NetworkLs, setNetworkLs] = useState<NetworkInspectInfo[]>();
@@ -44,6 +45,7 @@ function DockerNetworks({ data, eventKey }: Props) {
             data={data}
             fetchNetworkLs={fetchNetworkLs}
             setNetworksDetails={setNetworksDetails}
+            layout={layout}
         ></DockerNetwork>
     );
 
@@ -59,15 +61,17 @@ function DockerNetworks({ data, eventKey }: Props) {
                         {!loading && NetworkLs === undefined && <p>No networks found</p>}
                         {!loading && NetworkLs && (
                             <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Network ID</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Driver</th>
-                                        <th scope="col">Scope</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                {layout === "horizontal" &&
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Network ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Driver</th>
+                                            <th scope="col">Scope</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                }
                                 <tbody>
                                     {networkElements}
                                 </tbody>

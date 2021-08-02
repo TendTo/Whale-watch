@@ -15,6 +15,7 @@ interface Props {
     fetchContainerLs: (force?: boolean) => void
     setContainerDetails: (container: ContainerInspectInfo) => void
     setContainerLogs: (logs: ContainerLogs) => void
+    layout: 'horizontal' | 'vertical'
 }
 
 function timeConverter(unixTime: number) {
@@ -30,7 +31,7 @@ function timeConverter(unixTime: number) {
     return time;
 }
 
-function DockerContainer({ data, container, fetchContainerLs, setContainerDetails, setContainerLogs }: Props) {
+function DockerContainer({ data, container, layout, fetchContainerLs, setContainerDetails, setContainerLogs }: Props) {
     const [loading, setLoading] = useState(false);
     const dockerApi = useRef(DockerApi.fromDockerRemoteData(data, setLoading));
 
@@ -74,14 +75,16 @@ function DockerContainer({ data, container, fetchContainerLs, setContainerDetail
     }
 
     return (
-        <tr>
+        <>
             {loading && (
-                <td colSpan={5}>
-                    <Spinner animation="border" size="sm" />
-                </td>
+                <tr>
+                    <td colSpan={layout === "horizontal" ? 5 : 3}>
+                        <Spinner animation="border" size="sm" />
+                    </td>
+                </tr>
             )}
-            {!loading && (
-                <>
+            {!loading && layout === "horizontal" && (
+                <tr>
                     <td>{container.Names.map(e => e.slice(1))}</td>
                     <td>{container.Image}</td>
                     <td>{timeConverter(container.Created)}</td>
@@ -106,9 +109,52 @@ function DockerContainer({ data, container, fetchContainerLs, setContainerDetail
                             <i className="fa fa-trash"></i>
                         </Button>
                     </td>
+                </tr>
+            )}
+            {!loading && layout === "vertical" && (
+                <>
+                    <tr className="table-primary">
+                        <th colSpan={1}>Name</th>
+                        <td colSpan={2}>{container.Names.map(e => e.slice(1))}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Image Tag</th>
+                        <td colSpan={2}>{container.Image}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Created</th>
+                        <td colSpan={2}>{timeConverter(container.Created)}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Status</th>
+                        <td colSpan={2}>{container.Status}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Actions</th>
+                        <td colSpan={2} className="DockerContainers-actions" >
+                            <Button variant="success lg" onClick={onRun} disabled={loading}>
+                                <i className="fa fa-play"></i>
+                            </Button>
+                            <Button variant="info lg" onClick={onInspect} disabled={loading}>
+                                <i className="fa fa-eye"></i>
+                            </Button>
+                            <Button variant="light lg" onClick={onLogs} disabled={loading}>
+                                <i className="fa fa-file-text-o"></i>
+                            </Button>
+                            <Button variant="primary lg" onClick={onRestart} disabled={loading}>
+                                <i className="fa fa-refresh"></i>
+                            </Button>
+                            <Button variant="warning lg" onClick={onStop} disabled={loading}>
+                                <i className="fa fa-stop"></i>
+                            </Button>
+                            <Button variant="danger lg" onClick={onDelete} disabled={loading}>
+                                <i className="fa fa-trash"></i>
+                            </Button>
+                        </td>
+                    </tr>
                 </>
             )}
-        </tr>
+        </>
     );
 }
 

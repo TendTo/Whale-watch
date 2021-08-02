@@ -10,7 +10,7 @@ beforeEach(() => {
 test('DockerVolumes shows default value', () => {
     render(
         <AccordionContext.Provider value="0">
-            <DockerVolumes data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+            <DockerVolumes layout="horizontal" data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
         </AccordionContext.Provider >)
     expect(screen.getByText(/Volumes/)).toBeInTheDocument();
     expect(screen.getByText(/No volumes found/)).toBeInTheDocument();
@@ -23,7 +23,7 @@ test('DockerVolumes shows volumes', async () => {
         render(
             <AccordionContext.Provider value="0">
                 <Accordion >
-                    <DockerVolumes data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+                    <DockerVolumes layout="horizontal" data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
                 </Accordion>
             </AccordionContext.Provider >);
         screen.getByText(/Volumes/).click();

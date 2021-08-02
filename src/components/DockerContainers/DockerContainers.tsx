@@ -14,6 +14,7 @@ import './DockerContainers.css';
 interface Props {
     eventKey: string
     data: DockerRemoteData
+    layout: 'horizontal' | 'vertical'
 }
 
 function detailsConverter(containerDetails: ContainerInspectInfo | undefined) {
@@ -33,7 +34,7 @@ function logsConverter(logs: string | undefined) {
         )
 }
 
-function DockerContainers({ data, eventKey }: Props) {
+function DockerContainers({ data, eventKey, layout }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
     const [containerLs, setContainerLs] = useState<ContainerInfo[]>();
@@ -54,6 +55,7 @@ function DockerContainers({ data, eventKey }: Props) {
             fetchContainerLs={fetchContainerLs}
             setContainerDetails={setContainerDetails}
             setContainerLogs={setContainerLogs}
+            layout={layout}
         ></DockerContainer>
     );
 
@@ -69,15 +71,17 @@ function DockerContainers({ data, eventKey }: Props) {
                         {!loading && containerLs === undefined && <p>No containers found</p>}
                         {!loading && containerLs && (
                             <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Image Tag</th>
-                                        <th scope="col">Created</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                {layout === "horizontal" &&
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Image Tag</th>
+                                            <th scope="col">Created</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                }
                                 <tbody>
                                     {containersElements}
                                 </tbody>

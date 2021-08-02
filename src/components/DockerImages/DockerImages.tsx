@@ -14,6 +14,7 @@ import DockerImage from "./DockerImage";
 import './DockerImages.css';
 
 interface Props {
+    layout: 'vertical' | 'horizontal'
     eventKey: string
     data: DockerRemoteData
 }
@@ -24,13 +25,13 @@ function detailsConverter(imageDetails: ImageInspectInfo | undefined) {
     return JSON.stringify(imageDetails, null, 4);
 }
 
-function DockerImages({ data, eventKey }: Props) {
+function DockerImages({ data, eventKey, layout }: Props) {
     const currentEventKey = useContext(AccordionContext);
+
     const [loading, setLoading] = useState(false);
     const [imageLs, setImageLs] = useState<ImageInfo[]>();
     const [imageDetails, setImageDetails] = useState<ImageInspectInfo>();
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
-
 
     const fetchImageLs = (force = false) => {
         if (currentEventKey !== eventKey || force) {
@@ -57,6 +58,7 @@ function DockerImages({ data, eventKey }: Props) {
             image={image}
             fetchImageLs={fetchImageLs}
             setImageDetails={setImageDetails}
+            layout={layout}
         ></DockerImage>
     );
 
@@ -79,15 +81,17 @@ function DockerImages({ data, eventKey }: Props) {
                         {!loading && imageLs === undefined && <p>No images found</p>}
                         {!loading && imageLs && (
                             <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Image ID</th>
-                                        <th scope="col">Created</th>
-                                        <th scope="col">Size</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                {layout === "horizontal" &&
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Image ID</th>
+                                            <th scope="col">Created</th>
+                                            <th scope="col">Size</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                }
                                 <tbody>
                                     {imageElements}
                                 </tbody>

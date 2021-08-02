@@ -7,6 +7,7 @@ import { DockerRemoteData } from '../../types/DockerTypes';
 import toast, { requestErrorToast } from "../Toast/Toast";
 
 interface Props {
+    layout: "horizontal" | "vertical"
     key: number
     data: DockerRemoteData
     image: ImageInfo
@@ -38,7 +39,7 @@ function timeConverter(unixTime: number) {
     return time;
 }
 
-function DockerImage({ data, image, fetchImageLs, setImageDetails }: Props) {
+function DockerImage({ data, image, layout, fetchImageLs, setImageDetails }: Props) {
     const [loading, setLoading] = useState(false);
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
@@ -60,14 +61,16 @@ function DockerImage({ data, image, fetchImageLs, setImageDetails }: Props) {
     }
 
     return (
-        <tr>
+        <>
             {loading && (
-                <td colSpan={5}>
-                    <Spinner animation="border" size="sm" />
-                </td>
+                <tr>
+                    <td colSpan={layout === "horizontal" ? 5 : 3}>
+                        <Spinner animation="border" size="sm" />
+                    </td>
+                </tr>
             )}
-            {!loading && (
-                <>
+            {!loading && layout === "horizontal" && (
+                <tr>
                     <td>{image.RepoTags}</td>
                     <td className="DockerImages-image-id">{image.Id.slice(7)}</td>
                     <td>{timeConverter(image.Created)}</td>
@@ -83,9 +86,43 @@ function DockerImage({ data, image, fetchImageLs, setImageDetails }: Props) {
                             <i className="fa fa-trash"></i>
                         </Button>
                     </td>
+                </tr>
+            )}
+            {!loading && layout === "vertical" && (
+                <>
+                    <tr className="table-primary">
+                        <th colSpan={1}>Name</th>
+                        <td colSpan={2}>{image.RepoTags}</td>
+                    </tr>
+                    <tr>
+                        <th>Image ID</th>
+                        <td className="DockerImages-image-id" colSpan={2}>{image.Id.slice(7)}</td>
+                    </tr>
+                    <tr>
+                        <th>Created</th>
+                        <td colSpan={2}>{timeConverter(image.Created)}</td>
+                    </tr>
+                    <tr>
+                        <th>Size</th>
+                        <td colSpan={2}>{sizeConverter(image.Size)}</td>
+                    </tr>
+                    <tr>
+                        <th>Actions</th>
+                        <td className="DockerImages-actions" colSpan={2}>
+                            <Button variant="success lg" onClick={onRun} disabled={loading}>
+                                <i className="fa fa-play"></i>
+                            </Button>
+                            <Button variant="info lg" onClick={onInspect} disabled={loading}>
+                                <i className="fa fa-eye"></i>
+                            </Button>
+                            <Button variant="danger lg" onClick={onDelete} disabled={loading}>
+                                <i className="fa fa-trash"></i>
+                            </Button>
+                        </td>
+                    </tr>
                 </>
             )}
-        </tr>
+        </>
     );
 }
 

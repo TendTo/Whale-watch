@@ -10,7 +10,7 @@ beforeEach(() => {
 test('DockerImages shows default value', () => {
     render(
         <AccordionContext.Provider value="0">
-            <DockerImages data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+            <DockerImages layout='horizontal' data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
         </AccordionContext.Provider >)
     expect(screen.getByText(/Images/)).toBeInTheDocument();
     expect(screen.getByText(/No images found/)).toBeInTheDocument();
@@ -23,7 +23,7 @@ test('DockerImages shows images', async () => {
         render(
             <AccordionContext.Provider value="0">
                 <Accordion >
-                    <DockerImages data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
+                    <DockerImages layout='horizontal' data={{ protocol: "http", host: "localhost", port: 2375 }} eventKey="0" />
                 </Accordion>
             </AccordionContext.Provider >);
         screen.getByText(/Images/).click();

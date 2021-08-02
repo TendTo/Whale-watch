@@ -12,9 +12,10 @@ interface Props {
     network: NetworkInspectInfo
     fetchNetworkLs: (force?: boolean) => void
     setNetworksDetails: (newtwork: NetworkInspectInfo) => void
+    layout: 'horizontal' | 'vertical'
 }
 
-function DockerNetwork({ data, network, fetchNetworkLs, setNetworksDetails }: Props) {
+function DockerNetwork({ data, network, layout, fetchNetworkLs, setNetworksDetails }: Props) {
     const [loading, setLoading] = useState(false);
     const dockerApi = DockerApi.fromDockerRemoteData(data, setLoading);
 
@@ -31,14 +32,14 @@ function DockerNetwork({ data, network, fetchNetworkLs, setNetworksDetails }: Pr
     }
 
     return (
-        <tr>
+        <>
             {loading && (
-                <td colSpan={5}>
+                <td colSpan={layout === "horizontal" ? 5 : 3}>
                     <Spinner animation="border" size="sm" />
                 </td>
             )}
-            {!loading && (
-                <>
+            {!loading && layout === "horizontal" && (
+                <tr>
                     <td>{network.Name}</td>
                     <td className="DockerNetworks-ellipsis">{network.Id}</td>
                     <td>{network.Driver}</td>
@@ -51,9 +52,40 @@ function DockerNetwork({ data, network, fetchNetworkLs, setNetworksDetails }: Pr
                             <i className="fa fa-trash"></i>
                         </Button>
                     </td>
+                </tr>
+            )}
+            {!loading && layout === "vertical" && (
+                <>
+                    <tr className="table-primary">
+                        <th colSpan={1}>Network ID</th>
+                        <td colSpan={2}>{network.Name}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Name</th>
+                        <td colSpan={2} className="DockerNetworks-ellipsis">{network.Id}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Driver</th>
+                        <td colSpan={2}>{network.Driver}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Scope</th>
+                        <td colSpan={2}>{network.Scope}</td>
+                    </tr>
+                    <tr>
+                        <th colSpan={1}>Actions</th>
+                        <td colSpan={2} className="DockerNetworks-actions" >
+                            <Button variant="info lg" onClick={onInspect} disabled={loading}>
+                                <i className="fa fa-eye"></i>
+                            </Button>
+                            <Button variant="danger lg" onClick={onDelete} disabled={loading}>
+                                <i className="fa fa-trash"></i>
+                            </Button>
+                        </td>
+                    </tr>
                 </>
             )}
-        </tr>
+        </>
     );
 }
 

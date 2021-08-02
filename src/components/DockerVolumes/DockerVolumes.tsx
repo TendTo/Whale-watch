@@ -12,6 +12,7 @@ import DockerVolume from "./DockerVolume";
 import './DockerVolumes.css';
 
 interface Props {
+    layout: 'horizontal' | 'vertical';
     eventKey: string
     data: DockerRemoteData
 }
@@ -22,7 +23,7 @@ function detailsConverter(imageDetails: VolumeInspectInfo | undefined) {
     return JSON.stringify(imageDetails, null, 4);
 }
 
-function DockerVolumes({ data, eventKey }: Props) {
+function DockerVolumes({ data, eventKey, layout }: Props) {
     const currentEventKey = useContext(AccordionContext);
     const [loading, setLoading] = useState(false);
     const [volumeLs, setVolumeLs] = useState<VolumeList>();
@@ -41,6 +42,7 @@ function DockerVolumes({ data, eventKey }: Props) {
             data={data}
             fetchVolumeLs={fetchVolumeLs}
             setVolumeDetails={setVolumeDetails}
+            layout={layout}
         ></DockerVolume>
     );
 
@@ -56,14 +58,16 @@ function DockerVolumes({ data, eventKey }: Props) {
                         {!loading && volumeLs === undefined && <p>No volumes found</p>}
                         {!loading && volumeLs && (
                             <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Driver</th>
-                                        <th scope="col">Mountpoint</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                {layout === "horizontal" &&
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Driver</th>
+                                            <th scope="col">Mountpoint</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                }
                                 <tbody>
                                     {imageElements}
                                 </tbody>
