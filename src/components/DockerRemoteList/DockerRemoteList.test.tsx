@@ -30,7 +30,9 @@ test('DockerRemoteList shows one item', () => {
     port: 2375
   }
   );
-  expect(screen.getByText(/localhost:2375/i)).toBeInTheDocument();
+  expect(screen.getByText(/localhost/i)).toBeInTheDocument();
+  expect(screen.getByText(/2375/i)).toBeInTheDocument();
+  expect(screen.getByText(/http/i)).toBeInTheDocument();
   //expect(screen.getByText(/remotehost:2375/i)).toBeInTheDocument();
 });
 
@@ -44,10 +46,9 @@ test('DockerRemoteList shows more items', () => {
       protocol: "https",
       host: "remotehost",
       port: 2375,
-      ca: "ca",
-      cert: "cert",
-      key: "key"
     });
-  expect(screen.getByText(/localhost:2375/i)).toBeInTheDocument();
-  expect(screen.getByText(/remotehost:2375/i)).toBeInTheDocument();
+    expect(screen.getByText(/localhost/i)).toBeInTheDocument();
+    expect(screen.getByText(/^http$/i)).toBeInTheDocument();
+    expect(screen.getByText(/remotehost/i)).toBeInTheDocument();
+    expect(screen.getByText(/^https$/i)).toBeInTheDocument();
 });
