@@ -19,13 +19,13 @@ function DockerRemoteList() {
         const [key, value] = e;
         return (
             <Card bg="dark" key={key} border="primary" className="mb-3">
-                <Card.Header><h5>{`${value.host}:${value.port}`}</h5></Card.Header>
+                <Card.Header><h5>{value.host}</h5></Card.Header>
                 <Card.Body>
                     <Card.Text as={"div"}>
                         <Row>
                             <Col xs={9}>
-                                Host: <b>{value.host}</b><br></br>
                                 Port: <b>{value.port}</b><br></br>
+                                Connection: <b>{value.protocol}</b><br></br>
                             </Col>
                             <Col className="DockerRemoteList-buttons" xs={2}>
                                 <Link to={key}>
